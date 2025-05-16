@@ -11,13 +11,9 @@ jobs:
   build:
     runs-on: ubuntu-latest
     container:
-      image: node:20
+      image: node:22
     steps:
       - uses: actions/checkout@v4
-        with:
-          node-version: 20
-      - name: CI test
-        run: echo Ci testing
       - run: npm ci
       - run: npm test
       - run: npm run build
