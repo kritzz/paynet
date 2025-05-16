@@ -63,6 +63,7 @@ def get_summary(df, event):
 def get_seller_stats(df, event):
     query = event.get("queryStringParameters") or {}
     filtered_df = apply_filters(df, query)
+    print("Available columns:", filtered_df.columns.tolist())
     
     if "seller_name" not in filtered_df.columns:
         return respond({
@@ -82,13 +83,39 @@ def get_seller_stats(df, event):
     sort_order = query.get("sort_order", "desc")
     limit = int(query.get("limit", 0))  # 0 means no limit
 
-    seller_stats = filtered_df.groupby("seller_name").agg({
+    # Prepare aggregation dictionary
+    agg_dict = {
         price_column: ["sum", "count"],
         "title": "nunique"
-    }).reset_index()
+    }
     
-    seller_stats.columns = ["seller_name", "total_sales", "total_orders", "unique_products"]
+    # Add rating aggregations if columns exist
+    if "item_rating" in filtered_df.columns:
+        # Convert item_rating to numeric, replacing non-numeric values with NaN
+        filtered_df['item_rating'] = pd.to_numeric(filtered_df['item_rating'], errors='coerce')
+        agg_dict["item_rating"] = "mean"
+    
+    if "total_rating" in filtered_df.columns:
+        # Convert total_rating to numeric, replacing non-numeric values with 0
+        filtered_df['total_rating'] = pd.to_numeric(filtered_df['total_rating'], errors='coerce').fillna(0)
+        agg_dict["total_rating"] = "sum"
+
+    seller_stats = filtered_df.groupby("seller_name").agg(agg_dict).reset_index()
+    
+    # Set column names
+    column_names = ["seller_name", "total_sales", "total_orders", "unique_products"]
+    if "item_rating" in filtered_df.columns:
+        column_names.append("average_rating")
+    if "total_rating" in filtered_df.columns:
+        column_names.append("total_ratings")
+    seller_stats.columns = column_names
+    
+    # Round numeric columns
     seller_stats["total_sales"] = seller_stats["total_sales"].round(2)
+    if "average_rating" in seller_stats.columns:
+        seller_stats["average_rating"] = seller_stats["average_rating"].round(2)
+        # Replace NaN with 0 for average_rating
+        seller_stats["average_rating"] = seller_stats["average_rating"].fillna(0)
     
     # Sort the results
     ascending = sort_order.lower() == "asc"

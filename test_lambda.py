@@ -1,11 +1,11 @@
-from lambda_function import lambda_handler
+from lambda_function import get_seller_stats
 
 # Create a mock event and context
 event = {}
 context = None
 
 # Call the lambda function
-response = lambda_handler(event, context)
+response = get_seller_stats(event, context)
 
 # Print the response
 print(response)
