@@ -1,6 +1,7 @@
 from shopee_utils import load_dataset, respond
 import pandas as pd
 from datetime import datetime, timedelta
+import json
 
 def apply_filters(df, filters):
     if not filters:
@@ -186,8 +187,93 @@ def get_top_category(df, event):
 
     return respond(result.to_dict(orient="records"))
 
+def search_products(df, event):
+    try:
+        # Get the request body
+        body = event.get('body', '{}')
+        if isinstance(body, str):
+            body = json.loads(body)
+        
+        filtered_df = df.copy()
+        
+        # Search term filter (case-insensitive)
+        if 'searchterm' in body:
+            search_term = body['searchterm'].lower()
+            # Search in title, specification, and description
+            title_mask = filtered_df['title'].str.lower().str.contains(search_term, na=False)
+            spec_mask = filtered_df['specification'].str.lower().str.contains(search_term, na=False) if 'specification' in filtered_df.columns else pd.Series(False, index=filtered_df.index)
+            desc_mask = filtered_df['description'].str.lower().str.contains(search_term, na=False) if 'description' in filtered_df.columns else pd.Series(False, index=filtered_df.index)
+            filtered_df = filtered_df[title_mask | spec_mask | desc_mask]
+        
+        # Rating filter
+        if 'rating' in body:
+            rating = float(body['rating'])
+            if 'rating' in filtered_df.columns:
+                filtered_df = filtered_df[filtered_df['rating'] >= rating]
+        
+        # Price range filter
+        price_column = next((col for col in filtered_df.columns if 'price_actual' in col.lower()), None)
+        if price_column:
+            if 'min_price' in body:
+                filtered_df = filtered_df[filtered_df[price_column] >= float(body['min_price'])]
+            if 'max_price' in body:
+                filtered_df = filtered_df[filtered_df[price_column] <= float(body['max_price'])]
+        
+        # Sales filter
+        if 'min_sales' in body:
+            filtered_df = filtered_df[filtered_df['total_sold'] >= int(body['min_sales'])]
+        if 'max_sales' in body:
+            filtered_df = filtered_df[filtered_df['total_sold'] <= int(body['max_sales'])]
+        
+        # Orders filter
+        if 'min_orders' in body:
+            filtered_df = filtered_df[filtered_df['total_orders'] >= int(body['min_orders'])]
+        if 'max_orders' in body:
+            filtered_df = filtered_df[filtered_df['total_orders'] <= int(body['max_orders'])]
+        
+        # Get sorting parameters
+        sort_by = body.get('sort_by', 'total_sold')
+        sort_order = body.get('sort_order', 'desc')
+        limit = int(body.get('limit', 50))
+        
+        # Sort the results
+        ascending = sort_order.lower() == 'asc'
+        if sort_by in filtered_df.columns:
+            filtered_df = filtered_df.sort_values(by=sort_by, ascending=ascending)
+        
+        # Apply limit
+        filtered_df = filtered_df.head(limit)
+        
+        # Select and rename columns for response
+        response_columns = {
+            'title': 'title',
+            'price_actual': 'price',
+            'total_sold': 'sales',
+            'rating': 'rating',
+            'specification': 'specification',
+            'description': 'description',
+            'seller_name': 'seller',
+            'item_category_detail': 'category'
+        }
+        
+        # Only include columns that exist in the dataframe
+        available_columns = {k: v for k, v in response_columns.items() if k in filtered_df.columns}
+        result_df = filtered_df[available_columns.keys()].rename(columns=available_columns)
+        
+        return respond({
+            'total_results': len(filtered_df),
+            'products': result_df.to_dict(orient='records')
+        })
+        
+    except Exception as e:
+        return respond({
+            'error': str(e),
+            'message': 'Error processing product search request'
+        }, status=400)
+
 def lambda_handler(event, context):
     path = event.get("path", "").strip("/")
+    method = event.get("httpMethod", "").upper()
 
     # Load the dataset
     df = load_dataset()
@@ -202,10 +288,12 @@ def lambda_handler(event, context):
         return get_top_products(df, event)
     elif path == "top-category":
         return get_top_category(df, event)
+    elif path == "product" and method == "POST":
+        return search_products(df, event)
     else:
         return respond({
-            "error": "Invalid path",
+            "error": "Invalid path or method",
             "available_paths": [
-                "summary", "seller", "sales-trend", "top-products", "top-category"
+                "summary", "seller", "sales-trend", "top-products", "top-category", "product"
             ]
         }, status=400)

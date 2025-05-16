@@ -35,20 +35,10 @@ resource "aws_api_gateway_resource" "top_category" {
   path_part   = "top-category"
 }
 
-resource "aws_api_gateway_method" "top_category_method" {
-  rest_api_id   = aws_api_gateway_rest_api.api.id
-  resource_id   = aws_api_gateway_resource.top_category.id
-  http_method   = "GET"
-  authorization = "NONE"
-}
-
-resource "aws_api_gateway_integration" "top_category_integration" {
-  rest_api_id             = aws_api_gateway_rest_api.api.id
-  resource_id             = aws_api_gateway_resource.top_category.id
-  http_method             = aws_api_gateway_method.top_category_method.http_method
-  integration_http_method = "POST"
-  type                    = "AWS_PROXY"
-  uri                     = aws_lambda_function.summary.invoke_arn
+resource "aws_api_gateway_resource" "product" {
+  rest_api_id = aws_api_gateway_rest_api.api.id
+  parent_id   = aws_api_gateway_rest_api.api.root_resource_id
+  path_part   = "product"
 }
 
 # API Gateway methods
@@ -77,6 +67,20 @@ resource "aws_api_gateway_method" "top_products_method" {
   rest_api_id   = aws_api_gateway_rest_api.api.id
   resource_id   = aws_api_gateway_resource.top_products.id
   http_method   = "GET"
+  authorization = "NONE"
+}
+
+resource "aws_api_gateway_method" "top_category_method" {
+  rest_api_id   = aws_api_gateway_rest_api.api.id
+  resource_id   = aws_api_gateway_resource.top_category.id
+  http_method   = "GET"
+  authorization = "NONE"
+}
+
+resource "aws_api_gateway_method" "product_method" {
+  rest_api_id   = aws_api_gateway_rest_api.api.id
+  resource_id   = aws_api_gateway_resource.product.id
+  http_method   = "POST"
   authorization = "NONE"
 }
 
@@ -112,6 +116,24 @@ resource "aws_api_gateway_integration" "top_products_integration" {
   rest_api_id             = aws_api_gateway_rest_api.api.id
   resource_id             = aws_api_gateway_resource.top_products.id
   http_method             = aws_api_gateway_method.top_products_method.http_method
+  integration_http_method = "POST"
+  type                    = "AWS_PROXY"
+  uri                     = aws_lambda_function.summary.invoke_arn
+}
+
+resource "aws_api_gateway_integration" "top_category_integration" {
+  rest_api_id             = aws_api_gateway_rest_api.api.id
+  resource_id             = aws_api_gateway_resource.top_category.id
+  http_method             = aws_api_gateway_method.top_category_method.http_method
+  integration_http_method = "POST"
+  type                    = "AWS_PROXY"
+  uri                     = aws_lambda_function.summary.invoke_arn
+}
+
+resource "aws_api_gateway_integration" "product_integration" {
+  rest_api_id             = aws_api_gateway_rest_api.api.id
+  resource_id             = aws_api_gateway_resource.product.id
+  http_method             = aws_api_gateway_method.product_method.http_method
   integration_http_method = "POST"
   type                    = "AWS_PROXY"
   uri                     = aws_lambda_function.summary.invoke_arn
@@ -157,7 +179,7 @@ resource "aws_api_gateway_integration_response" "options_integration_response" {
   
   response_parameters = {
     "method.response.header.Access-Control-Allow-Headers" = "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'"
-    "method.response.header.Access-Control-Allow-Methods" = "'GET,OPTIONS'"
+    "method.response.header.Access-Control-Allow-Methods" = "'GET,POST,OPTIONS'"
     "method.response.header.Access-Control-Allow-Origin"  = "'*'"
   }
 }
@@ -170,6 +192,8 @@ resource "aws_api_gateway_deployment" "deployment" {
     aws_api_gateway_integration.seller_integration,
     aws_api_gateway_integration.sales_trend_integration,
     aws_api_gateway_integration.top_products_integration,
+    aws_api_gateway_integration.top_category_integration,
+    aws_api_gateway_integration.product_integration,
     aws_api_gateway_integration.options_integration
   ]
 
@@ -181,11 +205,13 @@ resource "aws_api_gateway_deployment" "deployment" {
       aws_api_gateway_resource.sales_trend.id,
       aws_api_gateway_resource.top_products.id,
       aws_api_gateway_resource.top_category.id,
+      aws_api_gateway_resource.product.id,
       aws_api_gateway_method.summary_method.id,
       aws_api_gateway_method.seller_method.id,
       aws_api_gateway_method.sales_trend_method.id,
       aws_api_gateway_method.top_products_method.id,
-      aws_api_gateway_method.top_category_method.id
+      aws_api_gateway_method.top_category_method.id,
+      aws_api_gateway_method.product_method.id
     ]))
   }
 }
@@ -205,6 +231,7 @@ output "api_urls" {
     sales_trend  = "${aws_api_gateway_deployment.deployment.invoke_url}${aws_api_gateway_stage.stage.stage_name}/sales-trend"
     top_products = "${aws_api_gateway_deployment.deployment.invoke_url}${aws_api_gateway_stage.stage.stage_name}/top-products"
     top_category = "${aws_api_gateway_deployment.deployment.invoke_url}${aws_api_gateway_stage.stage.stage_name}/top-category"
+    product      = "${aws_api_gateway_deployment.deployment.invoke_url}${aws_api_gateway_stage.stage.stage_name}/product"
   }
   description = "The URLs of the API Gateway endpoints"
 } 
