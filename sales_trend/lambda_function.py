@@ -8,16 +8,16 @@ def lambda_handler(event, context):
     start = query.get("start_date")
     end = query.get("end_date")
 
-    df["order_date"] = pd.to_datetime(df["order_date"])
+    df["w_date"] = pd.to_datetime(df["w_date"])
     if start:
-        df = df[df["order_date"] >= pd.to_datetime(start)]
+        df = df[df["w_date"] >= pd.to_datetime(start)]
     if end:
-        df = df[df["order_date"] <= pd.to_datetime(end)]
+        df = df[df["w_date"] <= pd.to_datetime(end)]
 
-    grouped = df.groupby(pd.Grouper(key="order_date", freq=interval)).agg({
-        "price": "sum",
-        "product_id": "count"
-    }).rename(columns={"price": "total_revenue", "product_id": "orders"}).reset_index()
+    grouped = df.groupby(pd.Grouper(key="w_date", freq=interval)).agg({
+        "price_actual": "sum",
+        "id": "count"
+    }).rename(columns={"price_actual": "total_revenue", "id": "orders"}).reset_index()
 
-    grouped["order_date"] = grouped["order_date"].dt.strftime("%Y-%m-%d")
+    grouped["w_date"] = grouped["w_date"].dt.strftime("%Y-%m-%d")
     return respond(grouped.to_dict(orient="records"))
