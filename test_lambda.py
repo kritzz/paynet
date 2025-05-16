@@ -1,4 +1,4 @@
-from sales_trend.lambda_function import lambda_handler
+from seller.lambda_function import lambda_handler
 
 # Create a mock event and context
 event = {}
