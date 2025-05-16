@@ -1,4 +1,4 @@
-from category.lambda_function import lambda_handler
+from summary.lambda_function import lambda_handler
 
 # Create a mock event and context
 event = {}
