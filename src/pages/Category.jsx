@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 import { Bar } from "react-chartjs-2";
+import DocTitle from "../components/DocTitle";
 import {
   Chart as ChartJS,
   CategoryScale,
@@ -14,6 +15,9 @@ import {
 ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend);
 
 export default function CategoryPage() {
+  // Set the browser tab title
+  DocTitle("Shopee Sales Dashboard - Categories");
+
   const [categories, setCategories] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -231,7 +235,7 @@ export default function CategoryPage() {
                       key={index}
                       ref={(el) => (tableRefs.current[index] = el)} // Assign ref to each row
                       className={`hover:bg-[#252525] cursor-pointer ${
-                        item.category === selectedCategory ? "bg-orange-600" : ""
+                        item.category === selectedCategory ? "bg-orange-500" : ""
                       }`}
                       onClick={() => handleSelectCategory(item.category)}
                     >

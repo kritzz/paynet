@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { FaStar, FaSearch, FaSort, FaSortUp, FaSortDown } from "react-icons/fa";
-
+import DocTitle from "../components/DocTitle";
 // Function to generate a color based on name
 const generateColor = (name = "") => {
   let hash = 0;
@@ -23,6 +23,7 @@ const getInitials = (name = "") => {
 };
 
 export default function SellersPage() {
+  DocTitle("Shopee Sales Dashboard - Sellers");
   const [sellers, setSellers] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);

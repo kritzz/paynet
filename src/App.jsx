@@ -20,6 +20,7 @@ function App() {
         <Route
           path="/"
           element={
+    
             <div className="min-h-screen bg-[#0d0d0d] px-4 py-6">
               <div className="max-w-6xl mx-auto">
                 <div className="flex flex-col items-center text-center mb-10">
@@ -49,6 +50,7 @@ function App() {
                 </div>
               </div>
             </div>
+          
           }
         />
 

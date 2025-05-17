@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { Line } from "react-chartjs-2";
+import DocTitle from "../components/DocTitle";
 import {
     Chart as ChartJS,
     CategoryScale,
@@ -15,6 +16,8 @@ import {
 ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend);
 
 export default function SalesTrendPage() {
+    // Set the browser tab title
+    DocTitle("Shopee Sales Dashboard - Sales Trend");
     const [data, setData] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
@@ -157,7 +160,10 @@ export default function SalesTrendPage() {
                                         } mt-2`}
                                 >
                                     {salesChange}%
-                                </p>
+                                    </p>
+                                    <p className="text-gray-400 mt-2">
+                                    This represents the percentage change in total sales between the first and last recorded dates.
+                                    </p>
                             </div>
                             <div className="bg-[#1a1a1a] p-6 rounded-lg shadow-md border border-[#333333]">
                                 <h2 className="text-lg font-bold text-gray-300">Total Orders Change</h2>
@@ -166,7 +172,11 @@ export default function SalesTrendPage() {
                                         } mt-2`}
                                 >
                                     {ordersChange}%
-                                </p>
+                                    </p>
+                                    <p className="text-gray-400 mt-2">
+                                    This represents the percentage change in total orders between the first and last recorded dates.
+                                    </p>
+
                             </div>
                         </div>
 

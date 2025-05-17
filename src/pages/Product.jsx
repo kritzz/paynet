@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import DocTitle from "../components/DocTitle";
 import {
   FaSearch,
   FaSort,
@@ -13,6 +14,7 @@ import "rc-slider/assets/index.css";
 import Navbar from "../components/Navbar";
 
 export default function ProductPage() {
+  DocTitle("Shopee Sales Dashboard - Products");
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);

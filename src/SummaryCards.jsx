@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+
 import {
   FaCalendarAlt,
   FaChartLine,
@@ -7,6 +8,7 @@ import {
 } from "react-icons/fa";
 
 function SummaryCards() {
+
   const [summaryData, setSummaryData] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
