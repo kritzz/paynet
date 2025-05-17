@@ -107,8 +107,6 @@ export default function ProductPage() {
 
   return (
     <div className="min-h-screen bg-[#0d0d0d]">
-      <Navbar />
-
       <div className="w-full bg-gradient-to-r from-orange-600 to-orange-500 py-8 mb-8 relative overflow-hidden">
         <div className="max-w-4xl mx-auto px-6 relative z-10">
           <h1 className="text-3xl font-bold text-white">Products</h1>
