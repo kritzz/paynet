@@ -1,41 +1,6 @@
 {
-  "apphosting": [
-    {
-      "backendId": "paynet-backend",
-      "rootDir": "./",
-      "ignore": [
-        "node_modules",
-        ".git",
-        "firebase-debug.log",
-        "firebase-debug.*.log",
-        "functions"
-      ]
-    },
-    {
-      "backendId": "paynet-backend",
-      "rootDir": "./",
-      "ignore": [
-        "node_modules",
-        ".git",
-        "firebase-debug.log",
-        "firebase-debug.*.log",
-        "functions"
-      ]
-    },
-    {
-      "backendId": "paynet-backend",
-      "rootDir": "./",
-      "ignore": [
-        "node_modules",
-        ".git",
-        "firebase-debug.log",
-        "firebase-debug.*.log",
-        "functions"
-      ]
-    }
-  ],
   "hosting": {
-    "public": "./",
+    "public": "dist",
     "ignore": [
       "firebase.json",
       "**/.*",
