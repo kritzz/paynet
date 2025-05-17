@@ -11,7 +11,7 @@ import {
 } from "react-icons/fa";
 import Slider from "rc-slider";
 import "rc-slider/assets/index.css";
-import Navbar from "../components/Navbar";
+import Navbar from "../components/NavBar";
 
 export default function ProductPage() {
   DocTitle("Shopee Sales Dashboard - Products");
