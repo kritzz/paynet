@@ -1,11 +1,17 @@
 import { useEffect, useState } from "react";
+import {
+  FaCalendarAlt,
+  FaChartLine,
+  FaShoppingCart,
+  FaUsers,
+} from "react-icons/fa";
 
 function SummaryCards() {
   const [summaryData, setSummaryData] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [startDate, setStartDate] = useState("2023-04-24"); // Default start date
-  const [endDate, setEndDate] = useState("2023-05-13"); // Default end date
+  const [startDate, setStartDate] = useState("2023-04-24");
+  const [endDate, setEndDate] = useState("2023-05-13");
 
   useEffect(() => {
     setLoading(true);
@@ -27,68 +33,108 @@ function SummaryCards() {
     };
 
     fetchData();
-  }, [startDate, endDate]); // Re-run fetchData when startDate or endDate changes
+  }, [startDate, endDate]);
 
   function formatKey(key) {
     return key
-      .replace(/_/g, " ") // Replace underscores with spaces
-      .replace(/\b\w/g, (char) => char.toUpperCase()); // Capitalize the first letter of each word
+      .replace(/_/g, " ")
+      .replace(/\b\w/g, (char) => char.toUpperCase());
   }
+
+  // Icons for each metric
+  const getIconForKey = (key) => {
+    switch (key) {
+      case "total_sales":
+        return <FaChartLine className="h-6 w-6" />;
+      case "total_orders":
+        return <FaShoppingCart className="h-6 w-6" />;
+      case "total_buyers":
+        return <FaUsers className="h-6 w-6" />;
+      default:
+        return <FaChartLine className="h-6 w-6" />;
+    }
+  };
 
   return (
     <div>
-      <p className="text-center text-gray-400 mb-4">
-        Use the calendars below to select a date range for filtering the summary data.
-      </p>
-      {/* Date Range Inputs */}
-      <div className="mb-6 flex justify-center gap-4">
-        <div>
-          <label className="block text-white mb-2">Start Date:</label>
-          <input
-            type="date"
-            value={startDate}
-            onChange={(e) => setStartDate(e.target.value)}
-            min="2023-04-24" // Disable dates before the original start date
-            max={endDate} // Ensure start date is not after the selected end date
-            className="p-2 rounded bg-gray-800 text-white border border-gray-600"
-          />
+      {/* Date Range Selector */}
+      <div className="mb-8 p-4 bg-[#1a1a1a] rounded-lg border border-[#333333]">
+        <div className="flex items-center mb-4">
+          <FaCalendarAlt className="text-orange-500 mr-2" />
+          <span className="text-white font-medium">Date Range Filter</span>
         </div>
-        <div>
-          <label className="block text-white mb-2">End Date:</label>
-          <input
-            type="date"
-            value={endDate}
-            onChange={(e) => setEndDate(e.target.value)}
-            min={startDate} // Ensure end date is not before the selected start date
-            max="2023-05-13" // Disable dates after the original end date
-            className="p-2 rounded bg-gray-800 text-white border border-gray-600"
-          />
+
+        <div className="flex flex-col sm:flex-row justify-between gap-4">
+          <div className="flex-1">
+            <label className="block text-gray-400 text-sm mb-2">
+              Start Date
+            </label>
+            <input
+              type="date"
+              value={startDate}
+              onChange={(e) => setStartDate(e.target.value)}
+              min="2023-04-24"
+              max={endDate}
+              className="w-full p-2.5 rounded bg-[#252525] text-white border border-[#333333] focus:ring-2 focus:ring-orange-500 focus:border-transparent transition-all"
+            />
+          </div>
+          <div className="flex-1">
+            <label className="block text-gray-400 text-sm mb-2">End Date</label>
+            <input
+              type="date"
+              value={endDate}
+              onChange={(e) => setEndDate(e.target.value)}
+              min={startDate}
+              max="2023-05-13"
+              className="w-full p-2.5 rounded bg-[#252525] text-white border border-[#333333] focus:ring-2 focus:ring-orange-500 focus:border-transparent transition-all"
+            />
+          </div>
         </div>
       </div>
 
-      {/* Summary Cards or Loading Animation */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 text-white">
+      {/* Error Message */}
+      {error && (
+        <div className="mb-6 p-4 bg-red-900 text-red-100 rounded-lg">
+          <p className="font-medium">Error loading data</p>
+          <p className="text-sm mt-1">{error}</p>
+        </div>
+      )}
+
+      {/* Summary Cards */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         {loading
           ? Array.from({ length: 3 }).map((_, idx) => (
-            <div
-              key={idx}
-              className="bg-gray-900 rounded-xl p-6 shadow-lg border border-gray-700 flex flex-col items-center justify-center text-center animate-pulse"
-            >
-              <div className="h-6 w-3/4 bg-gray-700 rounded mb-4"></div>
-              <div className="h-8 w-1/2 bg-gray-700 rounded"></div>
-            </div>
-          ))
-          : Object.entries(summaryData).map(([key, value], idx) => (
-            <div
-              key={idx}
-              className="bg-gray-900 rounded-xl p-6 shadow-lg border border-gray-700 flex flex-col items-center justify-center text-center"
-            >
-              <h3 className="text-lg font-bold text-orange-500 mb-2">{formatKey(key)}</h3>
-              <div className="text-xl font-medium break-words">
-                {idx === 0 ? `RM ${value}` : value}
+              <div
+                key={idx}
+                className="bg-[#1a1a1a] rounded-lg border border-[#333333] p-6 shadow-lg animate-pulse"
+              >
+                <div className="flex items-center mb-4">
+                  <div className="w-10 h-10 rounded-full bg-[#252525]"></div>
+                  <div className="ml-3 h-4 w-24 bg-[#252525] rounded"></div>
+                </div>
+                <div className="h-8 w-32 bg-[#252525] rounded"></div>
               </div>
-            </div>
-          ))}
+            ))
+          : Object.entries(summaryData).map(([key, value], idx) => (
+              <div
+                key={idx}
+                className="bg-[#1a1a1a] rounded-lg border border-[#333333] p-6 shadow-lg hover:shadow-xl transition-shadow duration-300"
+              >
+                <div className="flex items-center mb-3">
+                  <div className="w-10 h-10 rounded-full bg-orange-500 bg-opacity-20 flex items-center justify-center text-orange-500">
+                    {getIconForKey(key)}
+                  </div>
+                  <h3 className="ml-3 text-lg font-medium text-gray-300">
+                    {formatKey(key)}
+                  </h3>
+                </div>
+                <div className="text-2xl font-bold text-white">
+                  {key === "total_sales"
+                    ? `RM ${parseFloat(value).toLocaleString()}`
+                    : parseInt(value).toLocaleString()}
+                </div>
+              </div>
+            ))}
       </div>
     </div>
   );
