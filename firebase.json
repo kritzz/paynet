@@ -2,7 +2,7 @@
   "apphosting": [
     {
       "backendId": "paynet-backend",
-      "rootDir": "./src",
+      "rootDir": "./",
       "ignore": [
         "node_modules",
         ".git",
@@ -13,7 +13,7 @@
     },
     {
       "backendId": "paynet-backend",
-      "rootDir": "./src",
+      "rootDir": "./",
       "ignore": [
         "node_modules",
         ".git",
@@ -24,7 +24,7 @@
     },
     {
       "backendId": "paynet-backend",
-      "rootDir": "/src",
+      "rootDir": "./",
       "ignore": [
         "node_modules",
         ".git",
@@ -35,7 +35,7 @@
     }
   ],
   "hosting": {
-    "public": "public",
+    "public": "./",
     "ignore": [
       "firebase.json",
       "**/.*",
