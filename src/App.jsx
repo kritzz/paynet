@@ -5,6 +5,7 @@ import EndpointCards from "./EndpointCards";
 import SellersPage from "./pages/Seller";
 import ProductPage from "./pages/Product";
 import CategoryPage from "./pages/Category";
+import SalesTrendPage from "./pages/SalesTrend";
 import "./App.css";
 import Navbar from "./components/Navbar";
 
@@ -53,7 +54,7 @@ function App() {
 
         {/* Additional Routes */}
         <Route path="/top-products" element={<ProductPage />} />
-        <Route path="/sales-trend" element={<ProductPage />} />
+        <Route path="/sales-trend" element={<SalesTrendPage />} />
         <Route path="/top-categories" element={<CategoryPage />} />
         <Route path="/top-sellers" element={<SellersPage />} />
       </Routes>

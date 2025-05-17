@@ -17,8 +17,8 @@ export default function Navbar() {
     { path: "/", label: "Dashboard", icon: <FaHome /> },
     { path: "/top-products", label: "Products", icon: <FaBoxes /> },
     { path: "/sales-trend", label: "Sales Trend", icon: <FaChartBar /> },
-    { path: "/top-sellers", label: "Sellers", icon: <FaStoreAlt /> },
     { path: "/top-categories", label: "Categories", icon: <FaChartBar /> },
+    { path: "/top-sellers", label: "Sellers", icon: <FaStoreAlt /> },
   ];
 
   return (
