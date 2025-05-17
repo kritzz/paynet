@@ -4,32 +4,10 @@ import SummaryCards from "./SummaryCards";
 import EndpointCards from "./EndpointCards";
 import SellersPage from "./pages/Seller";
 import ProductPage from "./pages/Product";
+import CategoryPage from "./pages/Category";
 import "./App.css";
 import Navbar from "./components/Navbar";
 
-function TopProducts() {
-  return (
-    <h1 className="text-center text-2xl font-bold mt-10 text-white">
-      Top Products Page
-    </h1>
-  );
-}
-
-function SalesTrend() {
-  return (
-    <h1 className="text-center text-2xl font-bold mt-10 text-white">
-      Sales Trend Page
-    </h1>
-  );
-}
-
-function TopCategories() {
-  return (
-    <h1 className="text-center text-2xl font-bold mt-10 text-white">
-      Top Categories Page
-    </h1>
-  );
-}
 
 function App() {
   return (
@@ -75,8 +53,8 @@ function App() {
 
         {/* Additional Routes */}
         <Route path="/top-products" element={<ProductPage />} />
-        <Route path="/sales-trend" element={<SalesTrend />} />
-        <Route path="/top-categories" element={<TopCategories />} />
+        <Route path="/sales-trend" element={<ProductPage />} />
+        <Route path="/top-categories" element={<CategoryPage />} />
         <Route path="/top-sellers" element={<SellersPage />} />
       </Routes>
     </Router>
