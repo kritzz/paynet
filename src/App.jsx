@@ -7,7 +7,7 @@ import ProductPage from "./pages/Product";
 import CategoryPage from "./pages/Category";
 import SalesTrendPage from "./pages/SalesTrend";
 import "./App.css";
-import Navbar from "./components/Navbar";
+import Navbar from "./components/NavBar";
 
 
 function App() {
