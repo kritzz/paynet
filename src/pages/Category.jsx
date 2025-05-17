@@ -12,7 +12,14 @@ import {
 } from "chart.js";
 
 // Register Chart.js components
-ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend);
+ChartJS.register(
+  CategoryScale,
+  LinearScale,
+  BarElement,
+  Title,
+  Tooltip,
+  Legend
+);
 
 export default function CategoryPage() {
   // Set the browser tab title
@@ -45,7 +52,9 @@ export default function CategoryPage() {
 
         // Group by the second part of `item_category_detail` and sum up revenue
         const groupedData = data.reduce((acc, item) => {
-          const categoryParts = item.item_category_detail.split("|").map((part) => part.trim());
+          const categoryParts = item.item_category_detail
+            .split("|")
+            .map((part) => part.trim());
           const category = categoryParts[1]; // Extract the second part
           const subcategory = categoryParts[2]; // Extract the third part (subcategory)
 
@@ -60,11 +69,13 @@ export default function CategoryPage() {
         }, {});
 
         // Convert grouped data into an array for the chart and table
-        const formattedData = Object.entries(groupedData).map(([category, { revenue, subcategories }]) => ({
-          category,
-          revenue,
-          subcategories: Array.from(subcategories), // Convert subcategories set to an array
-        }));
+        const formattedData = Object.entries(groupedData).map(
+          ([category, { revenue, subcategories }]) => ({
+            category,
+            revenue,
+            subcategories: Array.from(subcategories), // Convert subcategories set to an array
+          })
+        );
 
         // Sort data in ascending order by default
         const sortedData = formattedData.sort((a, b) => a.revenue - b.revenue);
@@ -98,7 +109,10 @@ export default function CategoryPage() {
     // Scroll to the corresponding table row
     const index = categories.findIndex((item) => item.category === category);
     if (tableRefs.current[index]) {
-      tableRefs.current[index].scrollIntoView({ behavior: "smooth", block: "center" });
+      tableRefs.current[index].scrollIntoView({
+        behavior: "smooth",
+        block: "center",
+      });
     }
   };
 
@@ -110,10 +124,14 @@ export default function CategoryPage() {
         label: "Revenue (RM)",
         data: categories.map((item) => item.revenue),
         backgroundColor: categories.map((item) =>
-          item.category === selectedCategory ? "rgba(255, 255, 255, 1)" : "rgba(234, 88, 12, 1)"
+          item.category === selectedCategory
+            ? "rgba(255, 255, 255, 1)"
+            : "rgba(234, 88, 12, 1)"
         ), // Default orange, selected white
         borderColor: categories.map((item) =>
-          item.category === selectedCategory ? "rgba(255, 255, 255, 1)" : "rgba(234, 88, 12, 1)"
+          item.category === selectedCategory
+            ? "rgba(255, 255, 255, 1)"
+            : "rgba(234, 88, 12, 1)"
         ),
         borderWidth: 1,
       },
@@ -158,7 +176,10 @@ export default function CategoryPage() {
 
         // Scroll to the corresponding table row
         if (tableRefs.current[index]) {
-          tableRefs.current[index].scrollIntoView({ behavior: "smooth", block: "center" });
+          tableRefs.current[index].scrollIntoView({
+            behavior: "smooth",
+            block: "center",
+          });
         }
       }
     },
@@ -167,11 +188,12 @@ export default function CategoryPage() {
   return (
     <div className="min-h-screen bg-[#0d0d0d] p-6">
       <div className="max-w-4xl mx-auto">
-              {/* Header remains similar, just with a different background gradient */}
-              <div className="bg-gradient-to-r from-orange-600 to-orange-500 rounded-lg shadow-lg p-8 mb-8">
+        {/* Header remains similar, just with a different background gradient */}
+        <div className="bg-gradient-to-r from-orange-600 to-orange-500 rounded-lg shadow-lg p-8 mb-8">
           <h1 className="text-3xl font-bold text-white">Top Categories</h1>
           <p className="text-white text-opacity-90 mt-2">
-            Discover revenue performance across various categories          </p>
+            Discover revenue performance across various categories{" "}
+          </p>
         </div>
         {loading && (
           <div className="text-center py-12">
@@ -187,7 +209,7 @@ export default function CategoryPage() {
             <div className="flex justify-end mb-4">
               <button
                 onClick={() => handleSort("asc")}
-                className={`px-4 py-2 mr-2 rounded ${
+                className={`cursor-pointer px-4 py-2 mr-2 rounded ${
                   sortOrder === "asc"
                     ? "bg-orange-500 text-white"
                     : "bg-[#1a1a1a] text-gray-300 hover:bg-[#252525]"
@@ -197,7 +219,7 @@ export default function CategoryPage() {
               </button>
               <button
                 onClick={() => handleSort("desc")}
-                className={`px-4 py-2 rounded ${
+                className={`cursor-pointer px-4 py-2 rounded ${
                   sortOrder === "desc"
                     ? "bg-orange-500 text-white"
                     : "bg-[#1a1a1a] text-gray-300 hover:bg-[#252525]"
@@ -214,7 +236,9 @@ export default function CategoryPage() {
 
             {/* Table */}
             <div className="bg-[#1a1a1a] p-6 rounded-lg shadow-md border border-[#333333]">
-              <h2 className="text-xl font-bold text-white mb-4">Category Table</h2>
+              <h2 className="text-xl font-bold text-white mb-4">
+                Category Table
+              </h2>
               <table className="w-full border-collapse border border-[#333333]">
                 <thead>
                   <tr className="bg-[#252525]">
@@ -235,7 +259,9 @@ export default function CategoryPage() {
                       key={index}
                       ref={(el) => (tableRefs.current[index] = el)} // Assign ref to each row
                       className={`hover:bg-[#252525] cursor-pointer ${
-                        item.category === selectedCategory ? "bg-orange-500" : ""
+                        item.category === selectedCategory
+                          ? "bg-orange-500"
+                          : ""
                       }`}
                       onClick={() => handleSelectCategory(item.category)}
                     >
