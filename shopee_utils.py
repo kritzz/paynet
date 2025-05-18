@@ -3,10 +3,6 @@ import pandas as pd
 import tempfile
 import os
 
-from dotenv import load_dotenv
-
-load_dotenv()
-
 S3_BUCKET = "pnet-shopee-data"
 S3_KEY = "shopee-data/shopee_data.csv"
 
