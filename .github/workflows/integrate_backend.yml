@@ -88,20 +88,27 @@ jobs:
             exit 1
           fi
         continue-on-error: true
+      - name: Save deployed package as backup
+        if: steps.validation.outcome == 'success'
+        run: |
+          cp code.zip rollback/successfull_save.zip
 
-      - name: rollback if API doesnt get a response
+      - name: Redeploy last working Lambda version
         if: steps.validation.outcome == 'failure'
         run: |
-          echo "Rolling back to version ${{ steps.get_current_version.outputs.current_version }}"
+          aws lambda update-function-code \
+            --function-name shopee-api-dev-summary \
+            --zip-file fileb://rollback/rollback/successfull_save.zip \
+            --publish \
+            --query Version \
+            --output text > restored_version.txt
+          RESTORED_VERSION=$(cat restored_version.txt)
+          echo "Restored version: $RESTORED_VERSION"
+  
           aws lambda update-alias \
             --function-name shopee-api-dev-summary \
             --name live \
-            --function-version ${{ steps.get_current_version.outputs.current_version }}
-        env:
-          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          AWS_DEFAULT_REGION: ap-southeast-1
-
+            --function-version $RESTORED_VERSION
       - name: print final live version number
         run: |
           aws lambda get-alias \
