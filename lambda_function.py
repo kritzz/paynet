@@ -3,6 +3,7 @@ import pandas as pd
 from datetime import datetime, timedelta
 import json
 
+# Helper function to apply filters to the dataframe
 def apply_filters(df, filters):
     if not filters:
         return df
