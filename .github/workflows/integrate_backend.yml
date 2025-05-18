@@ -88,10 +88,19 @@ jobs:
             exit 1
           fi
         continue-on-error: true
-      - name: Save deployed package as backup
+
+      - name: Upload successful deployment package
         if: steps.validation.outcome == 'success'
-        run: |
-          cp code.zip rollback/successfull_save.zip
+        uses: actions/upload-artifact@v3
+        with:
+          name: lambda-backup
+          path: code.zip
+
+      - name: Download last working lambda package
+        if: steps.validation.outcome == 'failure'
+        uses: actions/download-artifact@v3
+        with:
+          name: lambda-backup
 
       - name: Redeploy last working Lambda version
         if: steps.validation.outcome == 'failure'
@@ -99,13 +108,13 @@ jobs:
           sleep 10
           aws lambda update-function-code \
             --function-name shopee-api-dev-summary \
-            --zip-file fileb://rollback/successfull_save.zip \
+            --zip-file fileb://code.zip \
             --publish \
             --query Version \
             --output text > restored_version.txt
           RESTORED_VERSION=$(cat restored_version.txt)
           echo "Restored version: $RESTORED_VERSION"
-  
+
           aws lambda update-alias \
             --function-name shopee-api-dev-summary \
             --name live \
@@ -114,6 +123,7 @@ jobs:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           AWS_DEFAULT_REGION: ap-southeast-1
+
       - name: print final live version number
         run: |
           aws lambda get-alias \
