@@ -109,6 +109,10 @@ jobs:
             --function-name shopee-api-dev-summary \
             --name live \
             --function-version $RESTORED_VERSION
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          AWS_DEFAULT_REGION: ap-southeast-1
       - name: print final live version number
         run: |
           aws lambda get-alias \
