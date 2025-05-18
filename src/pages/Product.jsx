@@ -11,7 +11,6 @@ import {
 } from "react-icons/fa";
 import Slider from "rc-slider";
 import "rc-slider/assets/index.css";
-import Navbar from "../components/Navbar";
 import FancyLoader from "../components/FancyLoader";
 
 export default function ProductPage() {
