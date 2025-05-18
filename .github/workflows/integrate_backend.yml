@@ -17,18 +17,21 @@ jobs:
           cp lambda_function.py lambda-package/
           cd lambda-package
           zip -r ../code.zip .
-      - name: Lambda alias version
+      - name: Publish Lambda and capture version
+        id: publish
         uses: imehedi/actions-awscli-v2@latest
         with:
           args: |
             lambda update-function-code \
-              --function-name arn:aws:lambda:ap-southeast-1:985787673409:function:shopee-api-dev-summary \
+              --function-name shopee-api-dev-summary \
               --zip-file fileb://code.zip \
               --publish \
-              --query 'Version' --output text
-          echo "Published version: $VERSION"
-
+              --query Version \
+              --output text
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           AWS_DEFAULT_REGION: "ap-southeast-1"
+      
+      - name: Show published version
+        run: echo "Published version: ${{ steps.publish.outputs.stdout }}"
