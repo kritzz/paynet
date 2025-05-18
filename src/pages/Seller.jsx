@@ -196,7 +196,7 @@ export default function SellersPage() {
             <p className="text-sm mt-1">{error}</p>
             <button
               onClick={() => window.location.reload()}
-              className="mt-2 text-sm bg-red-800 hover:bg-red-700 px-3 py-1 rounded"
+              className="cursor-pointer mt-2 text-sm bg-red-800 hover:bg-red-700 px-3 py-1 rounded"
             >
               Try Again
             </button>
