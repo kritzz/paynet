@@ -98,7 +98,7 @@ jobs:
         run: |
           aws lambda update-function-code \
             --function-name shopee-api-dev-summary \
-            --zip-file fileb://rollback/rollback/successfull_save.zip \
+            --zip-file fileb://rollback/successfull_save.zip \
             --publish \
             --query Version \
             --output text > restored_version.txt
