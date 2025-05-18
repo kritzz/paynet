@@ -1,0 +1,5 @@
+{
+  "path": "summary",
+  "httpMethod": "GET",
+  "queryStringParameters": {}
+}
