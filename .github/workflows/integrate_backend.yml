@@ -1,4 +1,5 @@
 name: Deploy to AWS Lambda
+
 on:
   push:
     branches: [backend]
@@ -8,17 +9,8 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v2
-
-      - name: Install zip tool
-        uses: montudor/action-zip@v1
-
-      - name: Create Zip file for Lambda function
-        run: |
-          mkdir lambda-package
-          cp lambda_function.py lambda-package/
-          cd lambda-package
-          zip -r ../code.zip .
+      - name: Checkout code
+        uses: actions/checkout@v2
 
       - name: Install AWS CLI
         run: |
@@ -26,8 +18,15 @@ jobs:
           unzip awscliv2.zip
           sudo ./aws/install
 
-      - name: Publish Lambda and capture version
-        id: publish
+      - name: Create deployment package
+        run: |
+          mkdir lambda-package
+          cp lambda_function.py lambda-package/
+          cd lambda-package
+          zip -r ../code.zip .
+
+      - name: Deploy Lambda and capture version
+        id: deploy_lambda
         run: |
           VERSION=$(aws lambda update-function-code \
             --function-name shopee-api-dev-summary \
@@ -35,12 +34,12 @@ jobs:
             --publish \
             --query Version \
             --output text)
-          echo "Published version: $VERSION"
+          echo "Lambda published version: $VERSION"
           echo "version=$VERSION" >> $GITHUB_OUTPUT
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          AWS_DEFAULT_REGION: "ap-southeast-1"
+          AWS_DEFAULT_REGION: ap-southeast-1
 
       - name: Show published version
-        run: echo "Published version: ${{ steps.publish.outputs.version }}"
+        run: echo "Published Lambda version is ${{ steps.deploy_lambda.outputs.version }}"
