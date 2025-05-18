@@ -72,7 +72,7 @@ jobs:
       - name: Deploy API Gateway stage
         run: |
           aws apigateway create-deployment \
-            --rest-api-id YOUR_API_ID \
+            --rest-api-id diqe9uc0ki \
             --stage-name dev
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
