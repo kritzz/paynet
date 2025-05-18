@@ -8,7 +8,6 @@ import {
 } from "react-icons/fa";
 
 function SummaryCards() {
-
   const [summaryData, setSummaryData] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -20,7 +19,7 @@ function SummaryCards() {
     const fetchData = async () => {
       try {
         const response = await fetch(
-          `https://corsproxy.io/?url=https://diqe9uc0ki.execute-api.ap-southeast-1.amazonaws.com/dev/summary?start_date=${startDate}&end_date=${endDate}`
+          `https://corsproxy.io/?url=https://ol2a8mfg1l.execute-api.ap-southeast-1.amazonaws.com/dev/summary?start_date=${startDate}&end_date=${endDate}`
         );
         if (!response.ok) {
           throw new Error("Failed to fetch data");

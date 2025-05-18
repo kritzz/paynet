@@ -41,7 +41,7 @@ export default function CategoryPage() {
         // Fetch data from the endpoint using corsproxy.io
         const response = await fetch(
           `https://corsproxy.io/?url=${encodeURIComponent(
-            "https://diqe9uc0ki.execute-api.ap-southeast-1.amazonaws.com/dev/top-category?sort_by=revenue&sort_order=asc&limit=1000"
+            "https://ol2a8mfg1l.execute-api.ap-southeast-1.amazonaws.com/dev/top-category?sort_by=revenue&sort_order=asc&limit=1000"
           )}`
         );
 

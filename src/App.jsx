@@ -9,6 +9,7 @@ import SalesTrendPage from "./pages/SalesTrend";
 import { FaChartLine, FaChartBar } from "react-icons/fa";
 import "./App.css";
 import Navbar from "./components/NavBar";
+import { Link } from "react-router-dom";
 
 function App() {
   return (
@@ -74,9 +75,11 @@ function App() {
                         Explore our comprehensive analytics tools and discover
                         actionable insights for your e-commerce business.
                       </p>
-                      <button className="px-8 py-3 bg-gradient-to-r from-orange-500 to-orange-600 text-white font-medium rounded-lg shadow-lg hover:shadow-orange-500/20 hover:translate-y-[-2px] transition-all duration-300">
-                        Explore Analytics
-                      </button>
+                      <Link to="/top-products">
+                        <button className="cursor-pointer px-8 py-3 bg-gradient-to-r from-orange-500 to-orange-600 text-white font-medium rounded-lg shadow-lg hover:shadow-orange-500/20 hover:translate-y-[-2px] transition-all duration-300">
+                          Explore Analytics
+                        </button>
+                      </Link>
                     </div>
                   </div>
                 </div>

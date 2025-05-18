@@ -38,7 +38,7 @@ export default function SellersPage() {
     const fetchSellers = async () => {
       try {
         setLoading(true);
-        const originalUrl = `https://diqe9uc0ki.execute-api.ap-southeast-1.amazonaws.com/dev/seller?sort_by=${sortField}&sort_order=${sortOrder}`;
+        const originalUrl = `https://ol2a8mfg1l.execute-api.ap-southeast-1.amazonaws.com/dev/seller?sort_by=${sortField}&sort_order=${sortOrder}`;
         const proxyUrl = `https://corsproxy.io/?url=${encodeURIComponent(
           originalUrl
         )}`;

@@ -53,7 +53,7 @@ export default function SalesTrendPage() {
 
         const response = await fetch(
           `https://corsproxy.io/?url=${encodeURIComponent(
-            "https://diqe9uc0ki.execute-api.ap-southeast-1.amazonaws.com/dev/sales-trend"
+            "https://ol2a8mfg1l.execute-api.ap-southeast-1.amazonaws.com/dev/sales-trend"
           )}`
         );
 

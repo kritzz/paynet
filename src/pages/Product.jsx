@@ -51,7 +51,7 @@ export default function ProductPage() {
 
         const response = await fetch(
           `https://corsproxy.io/?url=${encodeURIComponent(
-            "https://diqe9uc0ki.execute-api.ap-southeast-1.amazonaws.com/dev/product"
+            "https://ol2a8mfg1l.execute-api.ap-southeast-1.amazonaws.com/dev/product"
           )}`,
           {
             method: "POST",
@@ -284,11 +284,7 @@ export default function ProductPage() {
                   <div
                     key={idx}
                     onClick={() => handleProductClick(product.id)}
-                    className={`bg-[#1a1a1a] rounded-lg shadow-md hover:shadow-lg transition-all duration-200 overflow-hidden border ${
-                      selectedProduct === product.id
-                        ? "border-orange-500"
-                        : "border-[#333333]"
-                    } cursor-pointer`}
+                    className={`bg-[#1a1a1a] rounded-lg shadow-md hover:shadow-lg transition-all duration-200 overflow-hidden border cursor-pointer`}
                   >
                     <div className="h-1.5 bg-gradient-to-r from-orange-500 to-orange-400"></div>
                     <div className="p-6">
@@ -344,19 +340,41 @@ export default function ProductPage() {
                             <FaTags className="mr-1 text-orange-500" />{" "}
                             Category:
                           </span>
-                          <span className="text-green-400">
-                            {product.category || "Uncategorized"}
-                          </span>
+                          <div className="flex flex-wrap gap-1 justify-end">
+                            {product.category ? (
+                              product.category
+                                .split("|")
+                                .slice(1)
+                                .map((cat, index) => {
+                                  // Different colors for different category levels
+                                  const colorClasses = [
+                                    "bg-blue-500/20 text-blue-400",
+                                    "bg-purple-500/20 text-purple-400",
+                                    "bg-green-500/20 text-green-400",
+                                    "bg-amber-500/20 text-amber-400",
+                                    "bg-rose-500/20 text-rose-400",
+                                  ];
+
+                                  const colorClass =
+                                    colorClasses[index % colorClasses.length];
+
+                                  return (
+                                    <span
+                                      key={index}
+                                      className={`px-2 py-0.5 rounded-full text-xs font-medium ${colorClass}`}
+                                    >
+                                      {cat.trim()}
+                                    </span>
+                                  );
+                                })
+                            ) : (
+                              <span className="bg-gray-500/20 text-gray-400 px-2 py-0.5 rounded-full text-xs font-medium">
+                                Uncategorized
+                              </span>
+                            )}
+                          </div>
                         </div>
                       </div>
-
-                      {selectedProduct === product.id && (
-                        <div className="mt-4 pt-4 border-t border-[#333333]">
-                          <button className="w-full py-2 bg-orange-500 hover:bg-orange-600 text-white rounded font-medium transition-colors">
-                            View Details
-                          </button>
-                        </div>
-                      )}
                     </div>
                   </div>
                 ))
