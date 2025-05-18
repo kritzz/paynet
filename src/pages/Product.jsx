@@ -37,18 +37,16 @@ export default function ProductPage() {
     const fetchProducts = async () => {
       try {
         setLoading(true);
-
+  
         const payload = {
           searchterm: filter,
           rating,
           min_price: priceRange[0],
           max_price: priceRange[1],
-          sort_by: sortField,
-          sort_order: sortOrder,
           limit: ITEMS_PER_PAGE,
           offset: (page - 1) * ITEMS_PER_PAGE, // Calculate offset for pagination
         };
-
+  
         const response = await fetch(
           `https://corsproxy.io/?url=${encodeURIComponent(
             "https://ol2a8mfg1l.execute-api.ap-southeast-1.amazonaws.com/dev/product"
@@ -58,13 +56,27 @@ export default function ProductPage() {
             body: JSON.stringify(payload),
           }
         );
-
+  
         if (!response.ok) {
           throw new Error(`Error fetching products: ${response.statusText}`);
         }
-
+  
         const data = await response.json();
-        setProducts(data.products);
+  
+        // Sort the products array locally
+        const sortedProducts = [...data.products].sort((a, b) => {
+          if (sortField === "title") {
+            return sortOrder === "asc"
+              ? a.title.localeCompare(b.title)
+              : b.title.localeCompare(a.title);
+          } else {
+            return sortOrder === "asc"
+              ? a[sortField] - b[sortField]
+              : b[sortField] - a[sortField];
+          }
+        });
+  
+        setProducts(sortedProducts);
         setError(null);
       } catch (err) {
         setError(err.message || "An unknown error occurred");
@@ -73,7 +85,7 @@ export default function ProductPage() {
         setLoading(false);
       }
     };
-
+  
     fetchProducts();
   }, [filter, rating, priceRange, sortField, sortOrder, page]);
 
