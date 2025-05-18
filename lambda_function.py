@@ -163,7 +163,7 @@ def get_sales_trend(df, event):
     return respond(daily_sales.to_dict(orient="records"))
 
 def get_top_products(df, event):
-    query = event.get("queryStringParameters") or {}
+    query event.get("queryStringParameters") or {}
     filtered_df = apply_filters(df, query)
     
     price_column = next((col for col in filtered_df.columns if 'price_actual' in col.lower()), None)
