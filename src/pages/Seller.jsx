@@ -30,7 +30,7 @@ export default function SellersPage() {
   const [error, setError] = useState(null);
   const [filter, setFilter] = useState("");
   const [sortField, setSortField] = useState("average_rating");
-  const [sortOrder, setSortOrder] = useState("asc");
+  const [sortOrder, setSortOrder] = useState("desc");
   const [page, setPage] = useState(1);
   const [isDataValid, setIsDataValid] = useState(true);
 
