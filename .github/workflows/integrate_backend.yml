@@ -95,6 +95,7 @@ jobs:
 
       - name: Redeploy last working Lambda version
         if: steps.validation.outcome == 'failure'
+        sleep 10
         run: |
           aws lambda update-function-code \
             --function-name shopee-api-dev-summary \
