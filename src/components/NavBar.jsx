@@ -27,6 +27,11 @@ export default function Navbar() {
         <div className="flex justify-between h-16">
           <div className="flex items-center">
             <Link to="/" className="flex items-center">
+              <img
+                src="/Slogo.png"
+                width={45}
+                style={{ marginRight: "1rem" }}
+              ></img>
               <span className="text-xl font-bold text-orange-500">
                 Shopee Sales
               </span>

@@ -10,6 +10,7 @@ import {
   Tooltip,
   Legend,
 } from "chart.js";
+import FancyLoader from "../components/FancyLoader";
 
 // Register Chart.js components
 ChartJS.register(
@@ -195,10 +196,13 @@ export default function CategoryPage() {
             Discover revenue performance across various categories{" "}
           </p>
         </div>
+        {/* Loading State */}
         {loading && (
           <div className="text-center py-12">
-            <div className="inline-block w-8 h-8 border-4 border-orange-500 border-t-transparent rounded-full animate-spin"></div>
-            <p className="mt-2 text-gray-400">Loading categories...</p>
+            <div className="flex justify-center">
+              <FancyLoader />
+            </div>
+            <p className="mt-6 text-gray-400">Loading categories...</p>
           </div>
         )}
         {error && <p className="text-red-500">{error}</p>}

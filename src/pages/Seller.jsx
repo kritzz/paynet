@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { FaStar, FaSearch, FaSort, FaSortUp, FaSortDown } from "react-icons/fa";
 import DocTitle from "../components/DocTitle";
+import FancyLoader from "../components/FancyLoader";
 // Function to generate a color based on name
 const generateColor = (name = "") => {
   let hash = 0;
@@ -179,10 +180,13 @@ export default function SellersPage() {
           </div>
         )}
 
+        {/* Loading State */}
         {loading && (
           <div className="text-center py-12">
-            <div className="inline-block w-8 h-8 border-4 border-orange-500 border-t-transparent rounded-full animate-spin"></div>
-            <p className="mt-2 text-gray-400">Loading sellers...</p>
+            <div className="flex justify-center">
+              <FancyLoader />
+            </div>
+            <p className="mt-6 text-gray-400">Loading sellers...</p>
           </div>
         )}
 
@@ -233,7 +237,7 @@ export default function SellersPage() {
                             />
                           ))}
                           <span className="ml-2 text-gray-400 text-sm">
-                            {seller.average_rating.toFixed(1)}
+                            {seller.average_rating?.toFixed(1)}
                           </span>
                         </div>
 

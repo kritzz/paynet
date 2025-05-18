@@ -12,6 +12,7 @@ import {
 import Slider from "rc-slider";
 import "rc-slider/assets/index.css";
 import Navbar from "../components/Navbar";
+import FancyLoader from "../components/FancyLoader";
 
 export default function ProductPage() {
   DocTitle("Shopee Sales Dashboard - Products");
@@ -173,7 +174,7 @@ export default function ProductPage() {
 
               {/* Rating Filter */}
               <div>
-                <label className="block text-sm text-gray-400 mb-2 flex items-center">
+                <label className="text-sm text-gray-400 mb-2 flex items-center">
                   <FaStar className="text-orange-500 mr-1" /> Minimum Rating
                 </label>
                 <div className="flex items-center space-x-2">
@@ -254,8 +255,10 @@ export default function ProductPage() {
         {/* Loading State */}
         {loading && (
           <div className="text-center py-12">
-            <div className="inline-block w-8 h-8 border-4 border-orange-500 border-t-transparent rounded-full animate-spin"></div>
-            <p className="mt-2 text-gray-400">Loading products...</p>
+            <div className="flex justify-center">
+              <FancyLoader />
+            </div>
+            <p className="mt-6 text-gray-400">Loading products...</p>
           </div>
         )}
 
