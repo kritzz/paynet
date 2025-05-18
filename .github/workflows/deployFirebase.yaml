@@ -48,5 +48,4 @@ jobs:
         uses: peter-evans/create-issue-from-file@v5
         with:
           title: " Firebase Deploy Failed on '${{ github.ref_name }}'"
-          content-filepath: failure_report.md
           labels: bug
