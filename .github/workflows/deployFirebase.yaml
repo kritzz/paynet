@@ -38,3 +38,27 @@ jobs:
           VITE_FIREBASE_STORAGE_BUCKET: "paynet-a6a01.firebasestorage.app"
           VITE_FIREBASE_MESSAGING_SENDER_ID: ${{ secrets.FIREBASE_SENDER_ID }}
           VITE_FIREBASE_APP_ID: ${{ secrets.FIREBASE_APP_ID }}
+      - name: Deploy to Firebase
+        uses: FirebaseExtended/action-hosting-deploy@v0
+        with:
+          repoToken: "${{ secrets.GITHUB_TOKEN }}"
+          firebaseServiceAccount: ${{ secrets.FIREBASE_SERVICE_ACCOUNT_PAYNET_A6A01 }}
+          channelId: live
+          projectId: paynet-a6a01
+          
+      - name: Write failure info
+        if: failure()
+        run: |
+          echo "## Firebase Deployment Failed" > failure_report.md
+          echo "Branch: ${{ github.ref }}" >> failure_report.md
+          echo "Workflow: ${{ github.workflow }}" >> failure_report.md
+          echo "Job: ${{ github.job }}" >> failure_report.md
+          echo "Run: https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}" >> failure_report.md
+
+      - name: Create Issue on Failure
+        if: failure()
+        uses: peter-evans/create-issue-from-file@v5
+        with:
+          title: "Firebase Deploy Failed on '${{ github.ref_name }}'"
+          content-filepath: failure_report.md
+          labels: bug
