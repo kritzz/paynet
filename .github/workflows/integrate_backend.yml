@@ -69,29 +69,84 @@ jobs:
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           AWS_DEFAULT_REGION: ap-southeast-1
 
+      # - name: Validate Lambda via API Gateway
+      #   id: validation
+      #   continue-on-error: true
+      #   run: |
+      #     sleep 10  # Allow Lambda propagation
+      #     API_URL="https://ol2a8mfg1l.execute-api.ap-southeast-1.amazonaws.com/dev/summary"
+      #     HTTP_STATUS=$(curl -s -o response.txt -w "%{http_code}" "$API_URL")
+
+      #     echo "API Response:"
+      #     cat response.txt
+      #     echo "Status Code: $HTTP_STATUS"
+
+      #     if [ "$HTTP_STATUS" -eq 200 ]; then
+      #       echo "Validation passed"
+      #       exit 0
+      #     else
+      #       echo "Validation failed"
+      #       exit 1
+      #     fi
+      #   env:
+      #     AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+      #     AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+      #     AWS_DEFAULT_REGION: ap-southeast-1
+
       - name: Validate Lambda via API Gateway
         id: validation
         continue-on-error: true
         run: |
-          sleep 10  # Allow Lambda propagation
-          API_URL="https://ol2a8mfg1l.execute-api.ap-southeast-1.amazonaws.com/dev/summary"
-          HTTP_STATUS=$(curl -s -o response.txt -w "%{http_code}" "$API_URL")
+          sleep 10 
+          BASE_URL="https://ol2a8mfg1l.execute-api.ap-southeast-1.amazonaws.com/dev"
+          declare -A endpoints=(
+            ["/summary"]="GET"
+            ["/product"]="POST"
+            ["/sales-trend"]="GET"
+            ["/seller"]="GET"
+            ["/shopee-api-dev-summary"]="ANY"
+            ["/top-category"]="GET"
+            ["/top-products"]="GET"
+          )
 
-          echo "API Response:"
-          cat response.txt
-          echo "Status Code: $HTTP_STATUS"
+          overall_status=0
 
-          if [ "$HTTP_STATUS" -eq 200 ]; then
-            echo "Validation passed"
-            exit 0
-          else
-            echo "Validation failed"
-            exit 1
-          fi
+          for endpoint in "${!endpoints[@]}"; do
+            method=${endpoints[$endpoint]}
+            echo "Testing $method $BASE_URL$endpoint"
+
+            if [ "$method" = "POST" ]; then
+              # For POST, send empty JSON or customize as needed
+              HTTP_STATUS=$(curl -s -o response.txt -w "%{http_code}" -X POST -H "Content-Type: application/json" -d '{}' "$BASE_URL$endpoint")
+            elif [ "$method" = "ANY" ]; then
+              # Try GET and POST for ANY method (can adjust as needed)
+              HTTP_STATUS=$(curl -s -o response.txt -w "%{http_code}" -X GET "$BASE_URL$endpoint")
+              if [ "$HTTP_STATUS" -ne 200 ]; then
+                HTTP_STATUS=$(curl -s -o response.txt -w "%{http_code}" -X POST -H "Content-Type: application/json" -d '{}' "$BASE_URL$endpoint")
+              fi
+            else
+              HTTP_STATUS=$(curl -s -o response.txt -w "%{http_code}" -X "$method" "$BASE_URL$endpoint")
+            fi
+
+            echo "Response from $endpoint:"
+            cat response.txt
+            echo "Status Code: $HTTP_STATUS"
+
+            if [ "$HTTP_STATUS" -ne 200 ]; then
+              echo "Validation failed on $endpoint"
+              overall_status=1
+            else
+              echo "Validation passed on $endpoint"
+            fi
+          done
+
+          exit $overall_status
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           AWS_DEFAULT_REGION: ap-southeast-1
+
+      
 
       - name: Roll back alias to previous version if validation failed
         if: steps.validation.outcome == 'failure'
