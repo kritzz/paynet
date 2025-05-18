@@ -111,7 +111,7 @@ jobs:
 
           if [ "$HTTP_STATUS" -eq 200 ]; then
             echo "pass"
-            exit 0
+            exit 1
           else
             echo "fail"
             exit 1
