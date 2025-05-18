@@ -18,7 +18,7 @@ jobs:
           unzip awscliv2.zip
           sudo ./aws/install --update
 
-      - name: zip lamnda_function and shopee_utils
+      - name: zip lambda_function and shopee_utils
         run: |
           mkdir lambda-package
           cp lambda_function.py lambda-package/
@@ -89,18 +89,11 @@ jobs:
           fi
         continue-on-error: true
 
-      - name: Upload successful deployment package
+      - name: Save deployed package as backup
         if: steps.validation.outcome == 'success'
-        uses: actions/upload-artifact@v4
-        with:
-          name: lambda-backup
-          path: code.zip
-
-      - name: Download last working lambda package
-        if: steps.validation.outcome == 'failure'
-        uses: actions/download-artifact@v4
-        with:
-          name: lambda-backup
+        run: |
+          mkdir -p rollback
+          cp code.zip rollback/successfull_save.zip
 
       - name: Redeploy last working Lambda version
         if: steps.validation.outcome == 'failure'
@@ -108,7 +101,7 @@ jobs:
           sleep 10
           aws lambda update-function-code \
             --function-name shopee-api-dev-summary \
-            --zip-file fileb://code.zip \
+            --zip-file fileb://rollback/successfull_save.zip \
             --publish \
             --query Version \
             --output text > restored_version.txt
