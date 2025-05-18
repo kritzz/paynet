@@ -1,24 +1,11 @@
-name: Manual Rollback Lambda Alias
+name: Hello World Test
 
 on:
-  workflow_dispatch:
-    inputs:
-      version:
-        description: 'Lambda version number to rollback to'
-        required: true
-        type: string
+  push:
 
 jobs:
-  rollback:
+  hello:
     runs-on: ubuntu-latest
     steps:
-      - name: Rollback Lambda alias to specific version
-        run: |
-          aws lambda update-alias \
-            --function-name shopee-api-dev-summary \
-            --name live \
-            --function-version ${{ github.event.inputs.version }}
-        env:
-          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          AWS_DEFAULT_REGION: ap-southeast-1
+      - name: Say Hello
+        run: echo "👋 Hello world from branch!"
