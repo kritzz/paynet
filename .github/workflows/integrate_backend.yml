@@ -18,34 +18,15 @@ jobs:
           unzip awscliv2.zip
           sudo ./aws/install --update
 
-      - name: zip lamnda_function and shopee_utils
+      - name: zip lambda_function and shopee_utils
         run: |
           mkdir lambda-package
           cp lambda_function.py lambda-package/
           cp shopee_utils.py lambda-package/
           cd lambda-package
           zip -r ../code.zip .
-      - name: Backup current live Lambda version
-        run: |
-          echo "Fetching current live version code URL..."
-          URL=$(aws lambda get-function \
-            --function-name shopee-api-dev-summary \
-            --qualifier live \
-            --query 'Code.Location' \
-            --output text)
-          curl -s -o lambda-backup.zip "$URL"
-        env:
-          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          AWS_DEFAULT_REGION: ap-southeast-1
 
-      - name: Upload current live version as artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: lambda-backup
-          path: lambda-backup.zip
-
-      - name: get current alias version
+      - name: Get current alias version
         id: get_current_version
         run: |
           CURRENT_VERSION=$(aws lambda get-alias \
@@ -60,7 +41,7 @@ jobs:
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           AWS_DEFAULT_REGION: ap-southeast-1
 
-      - name: deploy Lambda and save new version
+      - name: Deploy Lambda and publish new version
         id: deploy_lambda
         run: |
           VERSION=$(aws lambda update-function-code \
@@ -76,7 +57,7 @@ jobs:
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           AWS_DEFAULT_REGION: ap-southeast-1
 
-      - name: update live to new version number
+      - name: Update alias 'live' to new version
         id: update_alias
         run: |
           aws lambda update-alias \
@@ -88,20 +69,10 @@ jobs:
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           AWS_DEFAULT_REGION: ap-southeast-1
 
-      - name: Deploy API Gateway stage
-        run: |
-          aws apigateway create-deployment \
-            --rest-api-id diqe9uc0ki \
-            --stage-name dev
-        env:
-          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          AWS_DEFAULT_REGION: ap-southeast-1
-
-      - name: check if lambda works
+      - name: Validate Lambda via API Gateway
         id: validation
         run: |
-          sleep 10
+          sleep 10  # Allow Lambda propagation
           API_URL="https://diqe9uc0ki.execute-api.ap-southeast-1.amazonaws.com/dev/summary"
           HTTP_STATUS=$(curl -s -o response.txt -w "%{http_code}" "$API_URL")
 
@@ -110,54 +81,31 @@ jobs:
           echo "Status Code: $HTTP_STATUS"
 
           if [ "$HTTP_STATUS" -eq 200 ]; then
-            echo "pass"
-            exit 1
+            echo "Validation passed"
+            exit 0
           else
-            echo "fail"
+            echo "Validation failed"
             exit 1
           fi
-        continue-on-error: true
-
-      - name: Download last working lambda package
-        if: steps.validation.outcome == 'failure'
-        uses: actions/download-artifact@v4
-        with:
-          name: lambda-backup
-
-      - name: Redeploy last working Lambda version
-        if: steps.validation.outcome == 'failure'
-        run: |
-          sleep 10
-          aws lambda update-function-code \
-            --function-name shopee-api-dev-summary \
-            --zip-file fileb://code.zip \
-            --publish \
-            --query Version \
-            --output text > restored_version.txt
-          RESTORED_VERSION=$(cat restored_version.txt)
-          echo "Restored version: $RESTORED_VERSION"
-
-          aws lambda update-alias \
-            --function-name shopee-api-dev-summary \
-            --name live \
-            --function-version $RESTORED_VERSION
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           AWS_DEFAULT_REGION: ap-southeast-1
-      - name: Re-deploy API Gateway stage (if rollback happened)
+
+      - name: Roll back alias to previous version if validation failed
         if: steps.validation.outcome == 'failure'
         run: |
-            aws apigateway create-deployment \
-            --rest-api-id diqe9uc0ki \
-            --stage-name dev \
-            --description "Re-deploying after rollback"
+          echo "Rolling back to version ${{ steps.get_current_version.outputs.current_version }}"
+          aws lambda update-alias \
+            --function-name shopee-api-dev-summary \
+            --name live \
+            --function-version ${{ steps.get_current_version.outputs.current_version }}
         env:
-            AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-            AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-            AWS_DEFAULT_REGION: ap-southeast-1
-    
-      - name: print final live version number
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          AWS_DEFAULT_REGION: ap-southeast-1
+
+      - name: Show final live alias version
         run: |
           aws lambda get-alias \
             --function-name shopee-api-dev-summary \
