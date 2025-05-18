@@ -42,3 +42,11 @@ jobs:
           firebaseServiceAccount: ${{ secrets.FIREBASE_SERVICE_ACCOUNT_PAYNET_A6A01 }}
           channelId: live
           projectId: paynet-a6a01
+
+      - name: Failure
+        if: failure()
+        uses: peter-evans/create-issue-from-file@v5
+        with:
+          title: " Firebase Deploy Failed on '${{ github.ref_name }}'"
+          content-filepath: failure_report.md
+          labels: bug
