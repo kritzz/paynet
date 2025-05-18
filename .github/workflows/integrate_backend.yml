@@ -18,7 +18,7 @@ jobs:
           unzip awscliv2.zip
           sudo ./aws/install --update
 
-      - name: zip lambda_function and shopee_utils
+      - name: zip lamnda_function and shopee_utils
         run: |
           mkdir lambda-package
           cp lambda_function.py lambda-package/
@@ -69,10 +69,20 @@ jobs:
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           AWS_DEFAULT_REGION: ap-southeast-1
 
+      - name: Deploy API Gateway stage
+        run: |
+          aws apigateway create-deployment \
+            --rest-api-id YOUR_API_ID \
+            --stage-name dev
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          AWS_DEFAULT_REGION: ap-southeast-1
+
       - name: check if lambda works
         id: validation
         run: |
-          sleep 10
+          sleep 30
           API_URL="https://diqe9uc0ki.execute-api.ap-southeast-1.amazonaws.com/dev/summary"
           HTTP_STATUS=$(curl -s -o response.txt -w "%{http_code}" "$API_URL")
 
@@ -89,11 +99,18 @@ jobs:
           fi
         continue-on-error: true
 
-      - name: Save deployed package as backup
+      - name: Upload successful deployment package
         if: steps.validation.outcome == 'success'
-        run: |
-          mkdir -p rollback
-          cp code.zip rollback/successfull_save.zip
+        uses: actions/upload-artifact@v4
+        with:
+          name: lambda-backup
+          path: code.zip
+
+      - name: Download last working lambda package
+        if: steps.validation.outcome == 'failure'
+        uses: actions/download-artifact@v4
+        with:
+          name: lambda-backup
 
       - name: Redeploy last working Lambda version
         if: steps.validation.outcome == 'failure'
@@ -101,7 +118,7 @@ jobs:
           sleep 10
           aws lambda update-function-code \
             --function-name shopee-api-dev-summary \
-            --zip-file fileb://rollback/successfull_save.zip \
+            --zip-file fileb://code.zip \
             --publish \
             --query Version \
             --output text > restored_version.txt
@@ -116,7 +133,18 @@ jobs:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           AWS_DEFAULT_REGION: ap-southeast-1
-
+      - name: Re-deploy API Gateway stage (if rollback happened)
+        if: steps.validation.outcome == 'failure'
+        run: |
+            aws apigateway create-deployment \
+            --rest-api-id diqe9uc0ki \
+            --stage-name dev \
+            --description "Re-deploying after rollback"
+        env:
+            AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+            AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+            AWS_DEFAULT_REGION: ap-southeast-1
+    
       - name: print final live version number
         run: |
           aws lambda get-alias \
