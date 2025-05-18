@@ -72,6 +72,7 @@ jobs:
       - name: check if lambda works
         id: validation
         run: |
+          sleep 10
           API_URL="https://diqe9uc0ki.execute-api.ap-southeast-1.amazonaws.com/dev/summary"
           HTTP_STATUS=$(curl -s -o response.txt -w "%{http_code}" "$API_URL")
 
