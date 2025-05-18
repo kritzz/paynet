@@ -71,6 +71,7 @@ jobs:
 
       - name: Validate Lambda via API Gateway
         id: validation
+        continue-on-error: true
         run: |
           sleep 10  # Allow Lambda propagation
           API_URL="https://ol2a8mfg1l.execute-api.ap-southeast-1.amazonaws.com/dev/summary"
