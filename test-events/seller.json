@@ -1,9 +1,0 @@
-{
-  "path": "seller",
-  "httpMethod": "GET",
-  "queryStringParameters": {
-    "sort_by": "total_sales",
-    "sort_order": "desc",
-    "limit": "5"
-  }
-}
