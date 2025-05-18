@@ -73,7 +73,7 @@ jobs:
         id: validation
         run: |
           sleep 10  # Allow Lambda propagation
-          API_URL="https://diqe9uc0ki.execute-api.ap-southeast-1.amazonaws.com/dev/summary"
+          API_URL="https://ol2a8mfg1l.execute-api.ap-southeast-1.amazonaws.com/dev/summary"
           HTTP_STATUS=$(curl -s -o response.txt -w "%{http_code}" "$API_URL")
 
           echo "API Response:"
