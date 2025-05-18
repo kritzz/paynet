@@ -41,7 +41,7 @@ def apply_filters(df, filters):
     return filtered_df
 
 def get_summary(df, event):
-    query=event.get("queryStringParameters") or {}
+    query = event.get("queryStringParameters") or {}
     filtered_df = apply_filters(df, query)
     
     price_column = next((col for col in filtered_df.columns if 'price_actual' in col.lower()), None)
@@ -64,7 +64,6 @@ def get_summary(df, event):
 def get_seller_stats(df, event):
     query = event.get("queryStringParameters") or {}
     filtered_df = apply_filters(df, query)
-    print("Available columns:", filtered_df.columns.tolist())
     
     if "seller_name" not in filtered_df.columns:
         return respond({
@@ -223,6 +222,10 @@ def search_products(df, event):
             body = json.loads(body)
         
         filtered_df = df.copy()
+
+         # Convert item_rating to numeric before filtering
+        if 'item_rating' in filtered_df.columns:
+            filtered_df['item_rating'] = pd.to_numeric(filtered_df['item_rating'], errors='coerce')
         
         # Search term filter (case-insensitive)
         if 'searchterm' in body:
@@ -236,8 +239,8 @@ def search_products(df, event):
         # Rating filter
         if 'rating' in body:
             rating = float(body['rating'])
-            if 'rating' in filtered_df.columns:
-                filtered_df = filtered_df[filtered_df['rating'] >= rating]
+            if 'item_rating' in filtered_df.columns:
+                filtered_df = filtered_df[filtered_df['item_rating'] >= rating]
         
         # Price range filter
         price_column = next((col for col in filtered_df.columns if 'price_actual' in col.lower()), None)
@@ -277,7 +280,7 @@ def search_products(df, event):
             'title': 'title',
             'price_actual': 'price',
             'total_sold': 'sales',
-            'rating': 'rating',
+            'item_rating': 'rating',
             'specification': 'specification',
             'description': 'description',
             'seller_name': 'seller',
