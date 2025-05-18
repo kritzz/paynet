@@ -26,6 +26,21 @@ jobs:
           cd lambda-package
           zip -r ../code.zip .
 
+      - name: Get current alias version
+        id: get_current_version
+        run: |
+          CURRENT_VERSION=$(aws lambda get-alias \
+            --function-name shopee-api-dev-summary \
+            --name live \
+            --query FunctionVersion \
+            --output text)
+          echo "Current alias version: $CURRENT_VERSION"
+          echo "current_version=$CURRENT_VERSION" >> $GITHUB_OUTPUT
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          AWS_DEFAULT_REGION: ap-southeast-1
+
       - name: Deploy Lambda and capture version
         id: deploy_lambda
         run: |
@@ -42,5 +57,56 @@ jobs:
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           AWS_DEFAULT_REGION: ap-southeast-1
 
-      - name: Show published version
-        run: echo "Published Lambda version is ${{ steps.deploy_lambda.outputs.version }}"
+      - name: Point alias to new version
+        id: update_alias
+        run: |
+          aws lambda update-alias \
+            --function-name shopee-api-dev-summary \
+            --name live \
+            --function-version ${{ steps.deploy_lambda.outputs.version }}
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          AWS_DEFAULT_REGION: ap-southeast-1
+
+      - name: check if lambda works
+        id: validation
+        run: |
+          API_URL="https://diqe9uc0ki.execute-api.ap-southeast-1.amazonaws.com/dev/summary"
+          HTTP_STATUS=$(curl -s -o response.txt -w "%{http_code}" "$API_URL")
+
+          echo "API Response:"
+          cat response.txt
+          echo "Status Code: $HTTP_STATUS"
+
+          if [ "$HTTP_STATUS" -eq 200 ]; then
+            echo "pass"
+            exit 0
+          else
+            echo "fail"
+            exit 1
+          fi
+        continue-on-error: true
+
+      - name: Rollback if validation failed
+        if: steps.validation.outcome == 'failure'
+        run: |
+          echo "Rolling back to version ${{ steps.get_current_version.outputs.current_version }}"
+          aws lambda update-alias \
+            --function-name shopee-api-dev-summary \
+            --name live \
+            --function-version ${{ steps.get_current_version.outputs.current_version }}
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          AWS_DEFAULT_REGION: ap-southeast-1
+
+      - name: Show final alias version
+        run: |
+          aws lambda get-alias \
+            --function-name shopee-api-dev-summary \
+            --name live
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          AWS_DEFAULT_REGION: ap-southeast-1
