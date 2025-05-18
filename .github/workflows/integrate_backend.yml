@@ -25,6 +25,25 @@ jobs:
           cp shopee_utils.py lambda-package/
           cd lambda-package
           zip -r ../code.zip .
+      - name: Backup current live Lambda version
+        run: |
+          echo "Fetching current live version code URL..."
+          URL=$(aws lambda get-function \
+            --function-name shopee-api-dev-summary \
+            --qualifier live \
+            --query 'Code.Location' \
+            --output text)
+          curl -s -o lambda-backup.zip "$URL"
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          AWS_DEFAULT_REGION: ap-southeast-1
+
+      - name: Upload current live version as artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: lambda-backup
+          path: lambda-backup.zip
 
       - name: get current alias version
         id: get_current_version
@@ -98,13 +117,6 @@ jobs:
             exit 1
           fi
         continue-on-error: true
-
-      - name: Upload successful deployment package
-        if: steps.validation.outcome == 'success'
-        uses: actions/upload-artifact@v4
-        with:
-          name: lambda-backup
-          path: code.zip
 
       - name: Download last working lambda package
         if: steps.validation.outcome == 'failure'
