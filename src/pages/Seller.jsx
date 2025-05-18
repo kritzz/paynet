@@ -155,7 +155,7 @@ export default function SellersPage() {
                 <button
                   key={field}
                   onClick={() => handleSort(field)}
-                  className={`cursor-pointer flex items-center px-3 py-1.5 rounded text-sm ${
+                  className={`cursor-pointer flex items-center px-3 rounded text-sm ${
                     sortField === field
                       ? "bg-orange-500 text-white font-medium"
                       : "bg-[#1a1a1a] text-gray-300 hover:bg-[#252525]"

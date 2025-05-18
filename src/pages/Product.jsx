@@ -184,7 +184,7 @@ export default function ProductPage() {
                     step="0.1"
                     value={tempRating}
                     onChange={(e) => setTempRating(Number(e.target.value))}
-                    className="w-full"
+                    className="w-full  cursor-pointer"
                   />
                   <span className="text-white text-lg font-medium min-w-[2.5rem] text-center">
                     {tempRating.toFixed(1)}
@@ -229,7 +229,7 @@ export default function ProductPage() {
               <button
                 key={field}
                 onClick={() => handleSort(field)}
-                className={`flex items-center px-3 py-1.5 rounded text-sm ${
+                className={`cursor-pointer flex items-center px-3 py-1.5 rounded text-sm ${
                   sortField === field
                     ? "bg-orange-500 text-white font-medium"
                     : "bg-[#1a1a1a] text-gray-300 hover:bg-[#252525]"
