@@ -91,14 +91,14 @@ jobs:
 
       - name: Upload successful deployment package
         if: steps.validation.outcome == 'success'
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: lambda-backup
           path: code.zip
 
       - name: Download last working lambda package
         if: steps.validation.outcome == 'failure'
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
           name: lambda-backup
 

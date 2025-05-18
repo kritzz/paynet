@@ -41,7 +41,7 @@ def apply_filters(df, filters):
     return filtered_df
 
 def get_summary(df, event):
-    query  event.get("queryStringParameters") or {}
+    query = event.get("queryStringParameters") or {}
     filtered_df = apply_filters(df, query)
     
     price_column = next((col for col in filtered_df.columns if 'price_actual' in col.lower()), None)
