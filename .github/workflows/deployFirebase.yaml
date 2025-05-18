@@ -20,6 +20,11 @@ jobs:
       - name: Install Dependencies
         run: npm ci
 
+      - name: Debug directory structure
+        run: |
+          echo "Directory structure:"
+          find src -type f | sort
+
       - name: Build
         run: npm run build
         env:
