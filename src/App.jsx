@@ -57,7 +57,7 @@ function App() {
                         </div>
 
                         {/* Summary Section */}
-                        {/* <div className="mb-20 scroll-m-20" id="metrics">
+                        <div className="mb-20 scroll-m-20" id="metrics">
                           <div className="flex items-center mb-8">
                             <div className="w-12 h-12 rounded-xl bg-orange-500/10 flex items-center justify-center text-orange-500 mr-4">
                               <FaChartLine className="h-5 w-5" />
@@ -67,7 +67,7 @@ function App() {
                             </h2>
                           </div>
                           <SummaryCards />
-                        </div> */}
+                        </div>
 
                         {/* Analytics Sections */}
                         <div className="scroll-m-20" id="analytics">
