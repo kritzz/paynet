@@ -22,7 +22,7 @@ jobs:
           cache: "npm"
 
       - name: Install Dependencies
-        run: npm install
+        run: npm ci
 
       - name: Debug directory structure
         run: |
@@ -38,6 +38,8 @@ jobs:
           VITE_FIREBASE_STORAGE_BUCKET: "paynet-a6a01.firebasestorage.app"
           VITE_FIREBASE_MESSAGING_SENDER_ID: ${{ secrets.FIREBASE_SENDER_ID }}
           VITE_FIREBASE_APP_ID: ${{ secrets.FIREBASE_APP_ID }}
+      - name: test
+        run: npm run test
       - name: Deploy to Firebase
         if: success()
         uses: FirebaseExtended/action-hosting-deploy@v0
