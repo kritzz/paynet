@@ -126,6 +126,7 @@ jobs:
           AWS_DEFAULT_REGION: ap-southeast-1
       - name: Run tests with pytest
         id: pytest
+        continue-on-error: true
         run: |
           pytest test_lambda_functions.py -v
       - name: Roll back alias to previous version if validation failed
