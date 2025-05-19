@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../contexts/AuthContext";
-import { FaLock, FaEnvelope } from "react-icons/fa";
+import { FaLock, FaEnvelope, FaGoogle } from "react-icons/fa";
 import DocTitle from "../components/DocTitle";
 
 export default function Login() {
@@ -10,7 +10,7 @@ export default function Login() {
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
-  const { login } = useAuth();
+  const { login, googleLogin } = useAuth();
   const navigate = useNavigate();
 
   async function handleSubmit(e) {
@@ -23,6 +23,20 @@ export default function Login() {
       navigate("/");
     } catch (error) {
       setError("Failed to sign in. Please check your credentials.");
+      console.error(error);
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  async function handleGoogleSignIn() {
+    try {
+      setError("");
+      setLoading(true);
+      await googleLogin();
+      navigate("/");
+    } catch (error) {
+      setError("Failed to sign in with Google. Please try again.");
       console.error(error);
     } finally {
       setLoading(false);
@@ -68,6 +82,7 @@ export default function Login() {
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   className="w-full pl-10 p-3 bg-[#252525] border border-[#333333] rounded-lg text-white focus:ring-2 focus:ring-orange-500 focus:border-transparent"
+                  placeholder="Enter your email"
                   required
                 />
               </div>
@@ -98,6 +113,7 @@ export default function Login() {
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   className="w-full pl-10 p-3 bg-[#252525] border border-[#333333] rounded-lg text-white focus:ring-2 focus:ring-orange-500 focus:border-transparent"
+                  placeholder="Enter your password"
                   required
                 />
               </div>
@@ -111,6 +127,23 @@ export default function Login() {
               {loading ? "Signing In..." : "Sign In"}
             </button>
           </form>
+
+          {/* Divider */}
+          <div className="flex items-center my-6">
+            <div className="flex-grow border-t border-[#333333]"></div>
+            <span className="px-3 text-sm text-gray-500">OR</span>
+            <div className="flex-grow border-t border-[#333333]"></div>
+          </div>
+
+          {/* Google Sign In Button */}
+          <button
+            onClick={handleGoogleSignIn}
+            disabled={loading}
+            className="w-full cursor-pointer p-3 bg-[#252525] hover:bg-[#333333] border border-[#444444] text-white font-medium rounded-lg flex items-center justify-center gap-2 shadow-lg transition-all disabled:opacity-70 disabled:cursor-not-allowed"
+          >
+            <FaGoogle className="text-white-500" />
+            <span>Continue with Google</span>
+          </button>
 
           <div className="mt-6 text-center">
             <p className="text-gray-400">

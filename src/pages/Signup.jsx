@@ -3,6 +3,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../contexts/AuthContext";
 import { FaLock, FaEnvelope, FaUser } from "react-icons/fa";
 import DocTitle from "../components/DocTitle";
+import { FaGoogle } from "react-icons/fa";
 
 export default function Signup() {
   DocTitle("Shopee Sales Dashboard - Sign Up");
@@ -14,6 +15,20 @@ export default function Signup() {
   const [loading, setLoading] = useState(false);
   const { signup } = useAuth();
   const navigate = useNavigate();
+
+  async function handleGoogleSignIn() {
+    try {
+      setError("");
+      setLoading(true);
+      await googleLogin();
+      navigate("/");
+    } catch (error) {
+      setError("Failed to sign in with Google. Please try again.");
+      console.error(error);
+    } finally {
+      setLoading(false);
+    }
+  }
 
   async function handleSubmit(e) {
     e.preventDefault();
@@ -51,7 +66,7 @@ export default function Signup() {
       <div className="absolute top-0 right-0 w-96 h-96 bg-orange-500 rounded-full opacity-5 blur-3xl z-0"></div>
       <div className="absolute bottom-0 left-0 w-96 h-96 bg-blue-500 rounded-full opacity-5 blur-3xl z-0"></div>
 
-      <div className="w-full max-w-md relative z-10">
+      <div className="w-full max-w-md relative z-10 my-20">
         <div className="text-center mb-8">
           <h1 className="text-4xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-orange-500 to-orange-400">
             Create Account
@@ -152,6 +167,23 @@ export default function Signup() {
               </button>
             </div>
           </form>
+
+          {/* Divider */}
+          <div className="flex items-center my-6">
+            <div className="flex-grow border-t border-[#333333]"></div>
+            <span className="px-3 text-sm text-gray-500">OR</span>
+            <div className="flex-grow border-t border-[#333333]"></div>
+          </div>
+
+          {/* Google Sign In Button */}
+          <button
+            onClick={handleGoogleSignIn}
+            disabled={loading}
+            className="w-full cursor-pointer p-3 bg-[#252525] hover:bg-[#333333] border border-[#444444] text-white font-medium rounded-lg flex items-center justify-center gap-2 shadow-lg transition-all disabled:opacity-70 disabled:cursor-not-allowed"
+          >
+            <FaGoogle className="text-white-500" />
+            <span>Continue with Google</span>
+          </button>
 
           <div className="mt-6 text-center">
             <p className="text-gray-400 text-sm">

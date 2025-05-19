@@ -5,10 +5,15 @@ import {
   signInWithEmailAndPassword,
   signOut,
   updateProfile,
+  updatePassword,
   sendPasswordResetEmail,
   onAuthStateChanged,
+  reauthenticateWithCredential,
+  EmailAuthProvider,
+  GoogleAuthProvider,
+  signInWithPopup,
 } from "firebase/auth";
-import app from "../firebase"; // Make sure this path is correct
+import app from "../firebase";
 
 // Create context
 const AuthContext = createContext();
@@ -44,6 +49,20 @@ export function AuthProvider({ children }) {
     return updateProfile(user, data);
   }
 
+  function updateUserPassword(user, newPassword) {
+    return updatePassword(user, newPassword);
+  }
+
+  function reauthenticateUser(user, credential) {
+    return reauthenticateWithCredential(user, credential);
+  }
+
+  // Add Google authentication
+  function googleLogin() {
+    const provider = new GoogleAuthProvider();
+    return signInWithPopup(auth, provider);
+  }
+
   // Set up auth state observer
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
@@ -61,6 +80,10 @@ export function AuthProvider({ children }) {
     logout,
     resetPassword,
     updateUserProfile,
+    updatePassword: updateUserPassword,
+    reauthenticateWithCredential: reauthenticateUser,
+    EmailAuthProvider,
+    googleLogin,
   };
 
   return (
