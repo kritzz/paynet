@@ -92,7 +92,17 @@ export default function Profile() {
 
           <div className="flex flex-col md:flex-row items-center gap-8 mb-8">
             <div className="w-24 h-24 rounded-full bg-gradient-to-r from-orange-500 to-orange-600 flex items-center justify-center text-white text-3xl font-bold">
-              {getInitials(currentUser?.displayName)}
+              {currentUser?.photoURL ? (
+                <img
+                  src={currentUser.photoURL}
+                  alt="Profile"
+                  className="w-24 h-24 rounded-full object-cover border-2 border-orange-500"
+                />
+              ) : (
+                <div className="w-24 h-24 rounded-full bg-gradient-to-r from-orange-500 to-orange-600 flex items-center justify-center text-white text-3xl font-bold">
+                  {getInitials(currentUser?.displayName)}
+                </div>
+              )}
             </div>
 
             <div className="flex-1">
