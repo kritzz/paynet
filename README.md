@@ -1,24 +1,92 @@
-# To the people reading this
-Main branch is depreciated
+# Shopee Sales Dashboard
 
-Backend is where the backend sits (AWS and related)
+## About the Project
 
-realFrontend is where the frontend sits (Vite + React)
+This project is a comprehensive sales analytics dashboard for Shopee, built using a dataset derived from Kaggle. It provides insightful visualizations and analytics tools for Shopee marketplace data, including product sales, seller performance, and category analysis.
 
-GH action workflows are in their respective branches
+## Project Structure
 
-https://paynet-a6a01.web.app/login
+- realFrontend branch: Contains the frontend application built with Vite + React
+- backend branch: Contains the API and backend services running on AWS
+- _Note: The main branch is deprecated. Please use the realFrontend and backend branches for the latest code._
 
+## Features
 
-# React + Vite
+- 📊 Sales trend analysis with interactive charts
+- 🏆 Top-performing product insights
+- 👨‍💼 Seller performance tracking and comparison
+- 🔍 Category-based revenue analysis
+- 📱 Responsive design for desktop and mobile devices
+- 🔒 Secure authentication system
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+## Technology Stack
 
-Currently, two official plugins are available:
+- Frontend: React, Vite, TailwindCSS
+- Backend: AWS Services (Lambda, API Gateway, S3)
+- Charts: Chart.js with React wrapper
+- Testing: Vitest, pytest
+- CI/CD: GitHub Actions workflows (in their respective branches)
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+## Live Demo
 
-## Expanding the ESLint configuration
+The application is deployed and can be accessed at: https://paynet-a6a01.web.app/login
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+## Getting Started
+
+Prerequisites
+
+- Node.js (v16+)
+- npm or yarn
+
+Installation and Setup
+
+1. Clone the repository
+
+```bash
+git clone https://github.com/kritzz/paynet.git
+```
+
+2. Switch to the realFrontend branch
+
+```bash
+git checkout realFrontend
+```
+
+3. Install dependencies
+
+```bash
+npm install
+# or
+yarn install
+```
+
+4. Start the development server
+
+```bash
+npm run dev
+# or
+yarn dev
+```
+
+## Testing
+
+Run the test suite with:
+
+```bash
+npm run test
+# or
+yarn test
+```
+
+## Deployment
+
+The application is automatically deployed via GitHub Actions workflow when changes are pushed to the main branches.
+
+## Data Source
+
+The dashboard is built on a dataset derived from [Kaggle's Shopee marketplace data](https://www.kaggle.com/datasets/yoongsin/shopee-sample-data), which has been processed and optimized for this application.
+
+## Acknowledgements
+
+- [Kaggle](https://www.kaggle.com/datasets/yoongsin/shopee-sample-data) for the original dataset
+- All contributors who helped build and improve this project
