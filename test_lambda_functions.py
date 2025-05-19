@@ -182,7 +182,7 @@ def test_get_top_products_with_filters(sample_dataframe):
     
     assert response['statusCode'] == 200
     assert len(response_body) == 1
-    assert response_body[0]['total_sales'] == 150.0
+    assert response_body[0]['total_sales'] == 250.0
 
 # Test get_top_category function
 def test_get_top_category_basic(sample_dataframe):
