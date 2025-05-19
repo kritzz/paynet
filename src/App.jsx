@@ -17,6 +17,7 @@ import Signup from "./pages/Signup";
 import Login from "./pages/Login";
 import AuthenticatedLayout from "./components/AuthenticatedLayout";
 import Profile from "./pages/Profile";
+import ResetPassword from "./pages/ResetPassword";
 
 function App() {
   return (
@@ -26,6 +27,8 @@ function App() {
           <Route path="/login" element={<Login />} />
           <Route path="/signup" element={<Signup />} />
           <Route path="/forgot-password" element={<ForgotPassword />} />
+          <Route path="/reset-password" element={<ResetPassword />} />
+
           {/* Landing Page */}
           <Route
             path="/"
