@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import {
   FaHome,
   FaChartBar,
@@ -7,11 +7,16 @@ import {
   FaStoreAlt,
   FaBars,
   FaTimes,
+  FaSignOutAlt,
+  FaUser,
 } from "react-icons/fa";
+import { useAuth } from "../contexts/AuthContext";
 
 export default function Navbar() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const location = useLocation();
+  const navigate = useNavigate();
+  const { currentUser, logout } = useAuth();
 
   const navLinks = [
     { path: "/", label: "Dashboard", icon: <FaHome /> },
@@ -20,6 +25,15 @@ export default function Navbar() {
     { path: "/top-categories", label: "Categories", icon: <FaChartBar /> },
     { path: "/top-sellers", label: "Sellers", icon: <FaStoreAlt /> },
   ];
+
+  const handleLogout = async () => {
+    try {
+      await logout();
+      navigate("/login");
+    } catch (error) {
+      console.error("Failed to log out", error);
+    }
+  };
 
   return (
     <nav className="bg-[#1a1a1a] border-b border-[#333333] sticky top-0 z-10">
@@ -39,7 +53,7 @@ export default function Navbar() {
           </div>
 
           {/* Desktop Navigation */}
-          <div className="hidden md:flex space-x-1">
+          <div className="hidden md:flex space-x-1 items-center">
             {navLinks.map((link) => (
               <Link
                 key={link.path}
@@ -54,6 +68,25 @@ export default function Navbar() {
                 {link.label}
               </Link>
             ))}
+
+            {/* Profile and Logout buttons for desktop */}
+            <div className="flex items-center ml-4 border-l border-[#333333] pl-4">
+              <Link
+                to="/profile"
+                className="flex items-center px-3 py-2 rounded-md text-sm font-medium text-gray-300 hover:bg-[#252525] transition-colors"
+              >
+                <FaUser className="mr-2" />
+                {currentUser?.displayName || "Profile"}
+              </Link>
+
+              <button
+                onClick={handleLogout}
+                className="cursor-pointer flex items-center px-3 py-2 ml-2 rounded-md text-sm font-medium text-gray-300 hover:bg-[#252525] transition-colors"
+              >
+                <FaSignOutAlt className="mr-2" />
+                Logout
+              </button>
+            </div>
           </div>
 
           {/* Mobile Navigation Button */}
@@ -91,6 +124,29 @@ export default function Navbar() {
                 {link.label}
               </Link>
             ))}
+
+            {/* Profile and Logout buttons for mobile */}
+            <div className="border-t border-[#333333] pt-2 mt-2">
+              <Link
+                to="/profile"
+                className="flex items-center px-3 py-2 rounded-md text-base font-medium text-gray-300 hover:bg-[#252525]"
+                onClick={() => setIsMobileMenuOpen(false)}
+              >
+                <FaUser className="mr-3" />
+                Profile
+              </Link>
+
+              <button
+                onClick={() => {
+                  handleLogout();
+                  setIsMobileMenuOpen(false);
+                }}
+                className="flex items-center w-full text-left px-3 py-2 rounded-md text-base font-medium text-gray-300 hover:bg-[#252525]"
+              >
+                <FaSignOutAlt className="mr-3" />
+                Logout
+              </button>
+            </div>
           </div>
         </div>
       )}
