@@ -1,3 +1,10 @@
+# To the people reading this
+Main branch is depreciated
+Backend is where the backend sits (AWS and related)
+realFrontend is where the frontend sits (Vite + React)
+GH action workflows are in their respective branches
+
+
 # React + Vite
 
 This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
