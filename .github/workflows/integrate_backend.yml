@@ -36,7 +36,6 @@ jobs:
         run: |
           mkdir lambda-package
           cp lambda_function.py shopee_utils.py lambda-package/
-          cp -r python/* lambda-package/
           cd lambda-package
           zip -r ../code.zip .
 
