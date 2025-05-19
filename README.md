@@ -7,6 +7,8 @@ realFrontend is where the frontend sits (Vite + React)
 
 GH action workflows are in their respective branches
 
+https://paynet-a6a01.web.app/login
+
 
 # React + Vite
 
