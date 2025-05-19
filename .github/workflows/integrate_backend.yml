@@ -126,9 +126,12 @@ jobs:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           AWS_DEFAULT_REGION: ap-southeast-1
-
+      - name: Run tests with pytest
+        id: pytest
+        run: |
+          pytest test_lambda_functions.py -v
       - name: Roll back alias to previous version if validation failed
-        if: steps.validation.outcome == 'failure'
+        if: steps.pytest.outcome == 'failure' || steps.validation.outcome == 'failure'
         run: |
           echo "Rolling back to version ${{ steps.get_current_version.outputs.current_version }}"
           aws lambda update-alias \
