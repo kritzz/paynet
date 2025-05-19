@@ -7,6 +7,7 @@ import {
   FaSignOutAlt,
   FaEdit,
   FaLock,
+  FaArrowRight,
 } from "react-icons/fa";
 import DocTitle from "../components/DocTitle";
 
@@ -118,7 +119,7 @@ export default function Profile() {
                     <button
                       type="submit"
                       disabled={loading}
-                      className="px-4 py-2 bg-orange-500 hover:bg-orange-600 text-white rounded-lg text-sm font-medium transition-colors"
+                      className="cursor-pointer px-4 py-2 bg-orange-500 hover:bg-orange-600 text-white rounded-lg text-sm font-medium transition-colors"
                     >
                       {loading ? "Saving..." : "Save Changes"}
                     </button>
@@ -128,7 +129,7 @@ export default function Profile() {
                         setIsEditing(false);
                         setDisplayName(currentUser?.displayName || "");
                       }}
-                      className="px-4 py-2 bg-[#252525] hover:bg-[#333333] text-white rounded-lg text-sm font-medium transition-colors"
+                      className="cursor-pointer px-4 py-2 bg-[#252525] hover:bg-[#333333] text-white rounded-lg text-sm font-medium transition-colors"
                     >
                       Cancel
                     </button>
@@ -140,7 +141,7 @@ export default function Profile() {
                     {currentUser?.displayName || "User"}
                     <button
                       onClick={() => setIsEditing(true)}
-                      className="ml-2 text-orange-400 hover:text-orange-300 text-sm"
+                      className="cursor-pointer ml-2 text-orange-400 hover:text-orange-300 text-sm"
                       title="Edit profile"
                     >
                       <FaEdit />
@@ -173,26 +174,26 @@ export default function Profile() {
               <div>
                 <button
                   onClick={() => navigate("/reset-password")}
-                  className="w-full p-3 flex items-center justify-between bg-[#252525] hover:bg-[#333333] border border-[#333333] rounded-lg transition-colors text-white"
+                  className="cursor-pointer w-full p-3 flex items-center justify-between bg-[#252525] hover:bg-[#333333] border border-[#333333] rounded-lg transition-colors text-white"
                 >
                   <span className="flex items-center">
                     <FaLock className="mr-2 text-orange-500" />
                     Change Password
                   </span>
-                  <span className="text-gray-500">→</span>
+                  <FaArrowRight className="text-gray-500" />
                 </button>
               </div>
 
               <div>
                 <button
                   onClick={handleLogout}
-                  className="w-full p-3 flex items-center justify-between bg-[#252525] hover:bg-[#333333] border border-[#333333] rounded-lg transition-colors text-white"
+                  className="cursor-pointer w-full p-3 flex items-center justify-between bg-[#252525] hover:bg-[#333333] border border-[#333333] rounded-lg transition-colors text-white"
                 >
                   <span className="flex items-center">
                     <FaSignOutAlt className="mr-2 text-orange-500" />
                     Logout
                   </span>
-                  <span className="text-gray-500">→</span>
+                  <FaArrowRight className="text-gray-500" />
                 </button>
               </div>
             </div>

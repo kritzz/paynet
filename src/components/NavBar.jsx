@@ -8,7 +8,6 @@ import {
   FaBars,
   FaTimes,
   FaSignOutAlt,
-  FaUser,
 } from "react-icons/fa";
 import { useAuth } from "../contexts/AuthContext";
 
@@ -35,6 +34,17 @@ export default function Navbar() {
     }
   };
 
+  // Function to get user initials
+  const getInitials = (name) => {
+    if (!name) return "U";
+    return name
+      .split(" ")
+      .map((part) => part[0])
+      .join("")
+      .toUpperCase()
+      .substring(0, 2);
+  };
+
   return (
     <nav className="bg-[#1a1a1a] border-b border-[#333333] sticky top-0 z-10">
       <div className="max-w-7xl mx-auto px-4">
@@ -45,7 +55,7 @@ export default function Navbar() {
                 src="/Slogo.png"
                 width={45}
                 style={{ marginRight: "1rem" }}
-              ></img>
+              />
               <span className="text-xl font-bold text-orange-500">
                 Shopee Sales
               </span>
@@ -73,10 +83,20 @@ export default function Navbar() {
             <div className="flex items-center ml-4 border-l border-[#333333] pl-4">
               <Link
                 to="/profile"
-                className="flex items-center px-3 py-2 rounded-md text-sm font-medium text-gray-300 hover:bg-[#252525] transition-colors"
+                className="flex items-center space-x-2 px-3 py-2 rounded-md text-sm font-medium text-gray-300 hover:bg-[#252525] transition-colors"
               >
-                <FaUser className="mr-2" />
-                {currentUser?.displayName || "Profile"}
+                {currentUser?.photoURL ? (
+                  <img
+                    src={currentUser.photoURL}
+                    alt="Profile"
+                    className="w-8 h-8 rounded-full object-cover border-2 border-orange-500"
+                  />
+                ) : (
+                  <div className="w-8 h-8 rounded-full bg-gradient-to-r from-orange-500 to-orange-600 flex items-center justify-center text-white text-sm font-bold">
+                    {getInitials(currentUser?.displayName)}
+                  </div>
+                )}
+                <span>{currentUser?.displayName || "Profile"}</span>
               </Link>
 
               <button
@@ -91,6 +111,21 @@ export default function Navbar() {
 
           {/* Mobile Navigation Button */}
           <div className="flex items-center md:hidden">
+            {/* User Avatar for Mobile */}
+            <Link to="/profile" className="mr-4">
+              {currentUser?.photoURL ? (
+                <img
+                  src={currentUser.photoURL}
+                  alt="Profile"
+                  className="w-8 h-8 rounded-full object-cover border-2 border-orange-500"
+                />
+              ) : (
+                <div className="w-8 h-8 rounded-full bg-gradient-to-r from-orange-500 to-orange-600 flex items-center justify-center text-white text-sm font-bold">
+                  {getInitials(currentUser?.displayName)}
+                </div>
+              )}
+            </Link>
+
             <button
               className="text-gray-300 hover:text-white focus:outline-none"
               onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
@@ -132,7 +167,9 @@ export default function Navbar() {
                 className="flex items-center px-3 py-2 rounded-md text-base font-medium text-gray-300 hover:bg-[#252525]"
                 onClick={() => setIsMobileMenuOpen(false)}
               >
-                <FaUser className="mr-3" />
+                <div className="w-8 h-8 rounded-full bg-gradient-to-r from-orange-500 to-orange-600 flex items-center justify-center text-white text-sm font-bold mr-3">
+                  {getInitials(currentUser?.displayName)}
+                </div>
                 Profile
               </Link>
 
